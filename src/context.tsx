@@ -26,7 +26,7 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({
     storedPlannerView === "week" ? "week" : "month"
   );
 
-  const currentDayOfWeek = new Date().getDay();
+  const currentDayOfWeek = new Date().getDay() - 1;
 
   const updatePlannerView = (view: PlannerViewType) => {
     localStorage.setItem("plannerView", view);

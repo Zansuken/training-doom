@@ -8,11 +8,11 @@ export type DaysOfWeek =
   | "Saturday";
 
 export const daysOfWeek: DaysOfWeek[] = [
-  "Sunday",
   "Monday",
   "Tuesday",
   "Wednesday",
   "Thursday",
   "Friday",
   "Saturday",
+  "Sunday",
 ];

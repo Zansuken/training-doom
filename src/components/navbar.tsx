@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { Link } from "@heroui/link";
-import { Chip } from "@heroui/react";
+import { Chip, Switch } from "@heroui/react";
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
@@ -9,10 +9,12 @@ import {
 
 import { siteConfig } from "@/config/site";
 import { useAppContext } from "@/context";
+import { useTheme } from "@/hooks/use-theme";
 
 export const Navbar = () => {
   const location = useLocation();
   const { currentDay } = useAppContext();
+  const {isDark, toggleTheme} = useTheme("dark");
 
   const isActive = (href: string) => {
     return location.pathname === href;
@@ -49,6 +51,11 @@ export const Navbar = () => {
           ))}
         </div>
       </NavbarContent>
+      <Switch
+        className="absolute top-4 right-4 z-50"
+        isSelected={isDark}
+        onChange={toggleTheme}
+      />
     </HeroUINavbar>
   );
 };

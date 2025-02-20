@@ -1,10 +1,9 @@
 import { Navbar } from "@/components/navbar";
+import { FC, PropsWithChildren } from "react";
 
-export default function DefaultLayout({
+const DefaultLayout: FC<PropsWithChildren> = ({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+}) => {
   return (
     <div className="relative flex flex-col h-screen">
       <Navbar />
@@ -14,3 +13,5 @@ export default function DefaultLayout({
     </div>
   );
 }
+
+export default DefaultLayout;

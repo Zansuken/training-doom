@@ -7,7 +7,6 @@ import React, {
 } from "react";
 
 import { daysOfWeek, DaysOfWeek } from "./constants";
-import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 
 type PlannerViewType = "week" | "month";
@@ -39,14 +38,11 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        navigate("/home");
       } else {
         setUser(null);
       }

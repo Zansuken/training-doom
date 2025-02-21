@@ -1,104 +1,114 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { Link } from "@heroui/link";
 import {
-  Chip,
   Switch,
   Dropdown,
   DropdownTrigger,
   Button,
   DropdownMenu,
   DropdownItem,
+  DropdownSection,
 } from "@heroui/react";
-import {
-  Navbar as HeroUINavbar,
-  NavbarContent,
-  NavbarItem,
-} from "@heroui/navbar";
+import { Navbar as HeroUINavbar } from "@heroui/navbar";
 import { Icon } from "@iconify/react";
 
-import { siteConfig } from "@/config/site";
+import useSiteConfig from "@/config/use-site-congig";
 import { useAppContext } from "@/context";
 import { useTheme } from "@/hooks/use-theme";
-import { auth } from "@/firebase";
+import { useNavigate } from "react-router-dom";
+
+const getUIDColor = (uid: string) => {
+  const colors = [
+    "#FFC107",
+    "#673AB7",
+    "#3F51B5",
+    "#009688",
+    "#FF5722",
+    "#FF9800",
+    "#795548",
+    "#607D8B",
+    "#9C27B0",
+    "#2196F3",
+    "#4CAF50",
+    "#FFEB3B",
+  ];
+  const index = uid.charCodeAt(0) % colors.length;
+  return colors[index];
+};
 
 export const Navbar = () => {
-  const location = useLocation();
-  const { currentDay, user } = useAppContext();
+  const { user } = useAppContext();
   const { isDark, toggleTheme } = useTheme("dark");
-
-  console.log("user", user);
-
+  const { siteConfig } = useSiteConfig();
   const navigate = useNavigate();
 
-  const isActive = (href: string) => {
-    return location.pathname === href;
-  };
-
-  const logout = async () => {
-    try {
-      await auth.signOut();
-      navigate("/auth/sign-in");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  console.log(user);
 
   return (
-    <HeroUINavbar maxWidth="xl" position="sticky">
-      <Chip
-        className="absolute top-4 z-50"
+    <HeroUINavbar
+      maxWidth="full"
+      position="sticky"
+      className="flex items-center"
+    >
+      <Button
         color="primary"
-        radius="sm"
-        size="lg"
-        variant="faded"
+        isIconOnly
+        variant="shadow"
+        onPress={() => navigate("/home")}
       >
-        {currentDay.toLocaleUpperCase()}
-      </Chip>
-      <NavbarContent className="basis-1/5 sm:basis-full pl-32" justify="center">
-        {user &&
-          siteConfig.navItems.map((item) => (
-            <NavbarItem key={item.href}>
-              <Link
-                className={`px-4 py-2 rounded-md transition-all ${
-                  isActive(item.href)
-                    ? "bg-blue-500 text-white"
-                    : "text-gray-700 hover:bg-gray-200"
-                }`}
-                color="foreground"
-                href={item.href}
+        <Icon icon="bx:bx-home" className="text-xl" />
+      </Button>
+      <div className="flex items-center gap-2">
+        {user && (
+          <div
+            style={{ backgroundColor: getUIDColor(user.uid) }}
+            className="rounded-full h-[28px] w-[28px] relative cursor-pointer"
+            onClick={() => navigate("/settings/account")}
+          >
+            <span className="text-gray-800 text-md font-semibold absolute inset-0 flex items-center justify-center">
+              {user.email?.charAt(0).toUpperCase()}
+            </span>
+          </div>
+        )}
+        <Switch
+          isSelected={isDark}
+          onChange={toggleTheme}
+          thumbIcon={
+            isDark ? <Icon icon="bx:bx-moon" /> : <Icon icon="bx:bx-sun" />
+          }
+        />
+        {user && (
+          <Dropdown>
+            <DropdownTrigger>
+              <Button
+                isIconOnly
+                className="bg-transparent border-none"
+                color="primary"
+                variant="flat"
                 size="lg"
+                radius="full"
               >
-                {item.label}
-              </Link>
-            </NavbarItem>
-          ))}
-      </NavbarContent>
-      <Switch
-        isSelected={isDark}
-        onChange={toggleTheme}
-        thumbIcon={
-          isDark ? <Icon icon="bx:bx-moon" /> : <Icon icon="bx:bx-sun" />
-        }
-      />
-      {user && (
-        <Dropdown>
-          <DropdownTrigger>
-            <Button
-              isIconOnly
-              className="bg-transparent border-none"
-              color="primary"
-              variant="flat"
-            >
-              <Icon icon="bx:bx-dots-vertical-rounded" />
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu>
-            <DropdownItem key="1" color="danger" onPress={logout}>
-              Log out
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
-      )}
+                <Icon icon="bx:bx-dots-vertical-rounded" />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu>
+              {Object.values(siteConfig.navItems).map((value, index) => (
+                <DropdownSection key={index} title={value.label}>
+                  {value.items.map(({ action, label, color, icon }, index) => (
+                    <DropdownItem
+                      key={index}
+                      onPress={action}
+                      color={color}
+                      startContent={icon && <Icon icon={icon} />}
+                      className={`text-${color}`}
+                    >
+                      {label}
+                    </DropdownItem>
+                  ))}
+                </DropdownSection>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+        )}
+      </div>
     </HeroUINavbar>
   );
 };

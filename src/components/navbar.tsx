@@ -88,7 +88,7 @@ export const Navbar = () => {
           <div
             style={{ backgroundColor: getUIDColor(user.uid) }}
             className="rounded-full h-[28px] w-[28px] relative cursor-pointer"
-            onClick={() => navigate("/settings/account")}
+            onClick={() => navigate("/settings#profile")}
           >
             <span className="text-gray-800 text-md font-semibold absolute inset-0 flex items-center justify-center">
               {userDisplayName.charAt(0).toUpperCase()}

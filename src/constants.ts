@@ -1,3 +1,5 @@
+import { UserDetailsType } from "./types";
+
 export type DaysOfWeek =
   | "Sunday"
   | "Monday"
@@ -16,3 +18,9 @@ export const daysOfWeek: DaysOfWeek[] = [
   "Saturday",
   "Sunday",
 ];
+
+export const defaultProfileValues: UserDetailsType = {
+  birthDate: "",
+  currentWeight: 0,
+  height: 0,
+};

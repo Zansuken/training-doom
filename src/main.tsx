@@ -11,11 +11,11 @@ import { AppContextProvider } from "./context.tsx";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <AppContextProvider>
-        <Provider>
+      <Provider>
+        <AppContextProvider>
           <App />
-        </Provider>
-      </AppContextProvider>
+        </AppContextProvider>
+      </Provider>
     </BrowserRouter>
   </React.StrictMode>
 );

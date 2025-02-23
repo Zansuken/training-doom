@@ -35,39 +35,11 @@ const getUIDColor = (uid: string) => {
   return colors[index];
 };
 
-type NotificationType = {
-  key: string;
-  onPress: () => void;
-  color: "danger" | "default" | "primary" | "secondary" | "success" | "warning";
-  icon: string;
-  label: string;
-};
-
 export const Navbar = () => {
-  const { user, userDetails, isAppLoading, userDisplayName } = useAppContext();
+  const { user, notifications, userDisplayName } = useAppContext();
   const { isDark, toggleTheme } = useTheme("dark");
   const { siteConfig } = useSiteConfig();
   const navigate = useNavigate();
-
-  const isProfileIncomplete =
-    !userDetails || Object.values(userDetails || {}).some((value) => !value);
-
-  const notifications: NotificationType[] = [];
-
-  if (
-    !isAppLoading &&
-    userDetails &&
-    isProfileIncomplete &&
-    !notifications.find((n) => n.key === "profile")
-  ) {
-    notifications.push({
-      key: "profile",
-      onPress: () => navigate("/settings#profile"),
-      color: "primary",
-      icon: "mdi:person-edit",
-      label: "Complete your profile",
-    });
-  }
 
   return (
     <HeroUINavbar

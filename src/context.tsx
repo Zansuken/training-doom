@@ -6,13 +6,22 @@ import React, {
   useEffect,
 } from "react";
 
-import { daysOfWeek, DaysOfWeek } from "./constants";
+import { daysOfWeek, DaysOfWeek, defaultProfileValues } from "./constants";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
-import { getUser } from "./functions/user";
+import { createUser, getUser } from "./functions/user";
 import { UserDetailsType } from "./types";
 import { useLocation, useNavigate } from "react-router-dom";
+import { addToast } from "@heroui/react";
 
 type PlannerViewType = "week" | "month";
+
+type NotificationType = {
+  key: string;
+  onPress: () => void;
+  color: "danger" | "default" | "primary" | "secondary" | "success" | "warning";
+  icon: string;
+  label: string;
+};
 
 interface ContextProps {
   currentDay: DaysOfWeek;
@@ -23,6 +32,8 @@ interface ContextProps {
   userDisplayName: string;
   userDetails: UserDetailsType | null;
   refreshUserDetails: () => Promise<void>;
+  notifications: NotificationType[];
+  removeNotification: (key: string) => void;
 }
 
 const AppContext = createContext<ContextProps | undefined>(undefined);
@@ -40,28 +51,82 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [userDetails, setUserDetails] = useState<UserDetailsType | null>(null);
+  const [notifications, setNotifications] = useState<NotificationType[]>([]);
 
   const navigate = useNavigate();
   const location = useLocation();
 
+  const addNotification = (notification: NotificationType) => {
+    // if notification already exists, don't add it again
+    if (notifications.some((n) => n.key === notification.key)) return;
+    setNotifications([...notifications, notification]);
+  };
+
+  const removeNotification = (key: string) => {
+    setNotifications(notifications.filter((n) => n.key !== key));
+  };
+
+  const isProfileIncomplete = (data: UserDetailsType) =>
+    Object.keys(data).some(
+      (key) =>
+        data[key as keyof UserDetailsType] ===
+        defaultProfileValues[key as keyof UserDetailsType]
+    );
+
   useEffect(() => {
     const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-        getUser(currentUser.uid).then((data) => {
-          setUserDetails(data as UserDetailsType);
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      try {
+        if (currentUser) {
+          setUser(currentUser);
+          const data = await getUser(currentUser.uid);
+
+          const notification: NotificationType = {
+            key: "incomplete-profile",
+            onPress: () => navigate("/settings#profile"),
+            color: "primary",
+            icon: "mdi:person-edit",
+            label: "Complete your profile",
+          };
+
+          if (data && isProfileIncomplete(data as UserDetailsType)) {
+            addNotification(notification);
+            setUserDetails(defaultProfileValues);
+          }
+
+          if (
+            data &&
+            Object.keys(data).every(
+              (key) =>
+                data[key] !== defaultProfileValues[key as keyof UserDetailsType]
+            )
+          ) {
+            setUserDetails(data as UserDetailsType);
+          }
+
+          if (!data) {
+            addNotification(notification);
+            await createUser(currentUser.uid, defaultProfileValues);
+            setUserDetails(defaultProfileValues);
+          }
           if (
             (data && location.pathname === "/auth/sign-in") ||
             location.pathname === "/auth/sign-up"
           )
             navigate("/home");
+        } else {
+          setUser(null);
+          setUserDetails(null);
+        }
+      } catch (error) {
+        console.error("Error getting user", error);
+        addToast({
+          title: "Error getting user",
+          color: "danger",
         });
-      } else {
-        setUser(null);
-        setUserDetails(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -71,6 +136,10 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({
     if (user) {
       const data = await getUser(user.uid);
       setUserDetails(data as UserDetailsType);
+
+      if (!isProfileIncomplete(data as UserDetailsType)) {
+        removeNotification("incomplete-profile");
+      }
     }
   };
 
@@ -92,6 +161,8 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({
         userDetails,
         userDisplayName: user?.displayName || "",
         refreshUserDetails,
+        notifications,
+        removeNotification,
       }}
     >
       {children}

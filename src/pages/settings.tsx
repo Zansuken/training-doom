@@ -11,35 +11,35 @@ const SettingsPage: FC = () => {
 
   const { isAppLoading, userDetails } = useAppContext();
 
+  if (Boolean(isAppLoading || !userDetails)) {
+    return <Loading />;
+  }
+
   return (
     <DefaultLayout>
       <div className="flex h-full w-full flex-col gap-4">
-        {Boolean(isAppLoading || !userDetails) ? (
-          <Loading />
-        ) : (
-          <section className="flex flex-col gap-4">
-            <Card className="flex flex-col gap-4 p-4">
-              <CardHeader title="Account">
-                <h1 className="text-4xl font-bold">Settings</h1>
-              </CardHeader>
-              <Divider />
-              <CardBody>
-                <section className="flex flex-col gap-4">
-                  <div className="flex items-center gap-4">
-                    <Icon icon="bx:bx-user" className="text-4xl" />
-                    <div className="flex flex-col">
-                      <Link href="#profile" color="foreground">
-                        <h3 className="text-2xl">Profile</h3>
-                      </Link>
-                      <p>Manage your profile settings here.</p>
-                    </div>
+        <section className="flex flex-col gap-4">
+          <Card className="flex flex-col gap-4 p-4">
+            <CardHeader title="Account">
+              <h1 className="text-4xl font-bold">Settings</h1>
+            </CardHeader>
+            <Divider />
+            <CardBody>
+              <section className="flex flex-col gap-4">
+                <div className="flex items-center gap-4">
+                  <Icon icon="bx:bx-user" className="text-4xl" />
+                  <div className="flex flex-col">
+                    <Link href="#profile" color="foreground">
+                      <h3 className="text-2xl">Profile</h3>
+                    </Link>
+                    <p>Manage your profile settings here.</p>
                   </div>
-                  <ProfileForm />
-                </section>
-              </CardBody>
-            </Card>
-          </section>
-        )}
+                </div>
+                <ProfileForm />
+              </section>
+            </CardBody>
+          </Card>
+        </section>
       </div>
     </DefaultLayout>
   );

@@ -5,9 +5,11 @@ import { FC } from "react";
 const Loading: FC = () => {
   return (
     <DefaultLayout>
-      <CircularProgress />
+      <div className="flex h-full w-full items-center justify-center">
+        <CircularProgress />
+      </div>
     </DefaultLayout>
   );
-}
+};
 
 export default Loading;

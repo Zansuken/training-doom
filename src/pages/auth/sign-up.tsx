@@ -1,37 +1,31 @@
-import { FC, useState } from "react";
-import { Button, Input } from "@heroui/react";
-import { Icon } from "@iconify/react";
+import { FC } from "react";
+import { Button } from "@heroui/react";
 import DefaultLayout from "@/layouts/default";
 import { useNavigate } from "react-router-dom";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
-
-type SignUpFormData = {
-  email: string;
-  password: string;
-};
+import { SubmitHandler } from "react-hook-form";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  updateProfile,
+} from "firebase/auth";
+import SignUpForm, { SignUpFormData } from "@/components/sign-up-form";
 
 const SignUp: FC = () => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  const { register, handleSubmit } = useForm<SignUpFormData>({
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
-  const toggleVisibility = () => setIsVisible(!isVisible);
-
   const navigate = useNavigate();
   const auth = getAuth();
 
   const onSubmit: SubmitHandler<SignUpFormData> = async ({
     email,
     password,
+    nickname,
   }) => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const newUser = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      await updateProfile(newUser.user, { displayName: nickname });
       navigate("/home");
     } catch (error) {
       console.error(error);
@@ -50,48 +44,7 @@ const SignUp: FC = () => {
               👋
             </span>
           </p>
-          <form
-            className="flex flex-col gap-4"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <Input
-              isRequired
-              label="Email"
-              labelPlacement="outside"
-              placeholder="Enter your email"
-              type="email"
-              variant="bordered"
-              {...register("email")}
-            />
-            <Input
-              isRequired
-              endContent={
-                <button type="button" onClick={toggleVisibility}>
-                  {isVisible ? (
-                    <Icon
-                      className="pointer-events-none text-2xl text-default-400"
-                      icon="solar:eye-closed-linear"
-                    />
-                  ) : (
-                    <Icon
-                      className="pointer-events-none text-2xl text-default-400"
-                      icon="solar:eye-bold"
-                    />
-                  )}
-                </button>
-              }
-              label="Password"
-              labelPlacement="outside"
-              placeholder="Enter your password"
-              type={isVisible ? "text" : "password"}
-              variant="bordered"
-              className="pb-4"
-              {...register("password")}
-            />
-            <Button color="primary" type="submit">
-              Sign Up
-            </Button>
-          </form>
+          <SignUpForm onSubmit={onSubmit} />
           <p className="text-center text-small">
             <Button
               className="w-full"

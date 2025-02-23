@@ -6,6 +6,7 @@ import {
   DropdownMenu,
   DropdownItem,
   DropdownSection,
+  Badge,
 } from "@heroui/react";
 import { Navbar as HeroUINavbar } from "@heroui/navbar";
 import { Icon } from "@iconify/react";
@@ -34,13 +35,39 @@ const getUIDColor = (uid: string) => {
   return colors[index];
 };
 
+type NotificationType = {
+  key: string;
+  onPress: () => void;
+  color: "danger" | "default" | "primary" | "secondary" | "success" | "warning";
+  icon: string;
+  label: string;
+};
+
 export const Navbar = () => {
-  const { user } = useAppContext();
+  const { user, userDetails, isAppLoading, userDisplayName } = useAppContext();
   const { isDark, toggleTheme } = useTheme("dark");
   const { siteConfig } = useSiteConfig();
   const navigate = useNavigate();
 
-  console.log(user);
+  const isProfileIncomplete =
+    !userDetails || Object.values(userDetails || {}).some((value) => !value);
+
+  const notifications: NotificationType[] = [];
+
+  if (
+    !isAppLoading &&
+    userDetails &&
+    isProfileIncomplete &&
+    !notifications.find((n) => n.key === "profile")
+  ) {
+    notifications.push({
+      key: "profile",
+      onPress: () => navigate("/settings#profile"),
+      color: "primary",
+      icon: "mdi:person-edit",
+      label: "Complete your profile",
+    });
+  }
 
   return (
     <HeroUINavbar
@@ -64,9 +91,39 @@ export const Navbar = () => {
             onClick={() => navigate("/settings/account")}
           >
             <span className="text-gray-800 text-md font-semibold absolute inset-0 flex items-center justify-center">
-              {user.email?.charAt(0).toUpperCase()}
+              {userDisplayName.charAt(0).toUpperCase()}
             </span>
           </div>
+        )}
+        {user && (
+          <Dropdown>
+            <DropdownTrigger>
+              <Button isIconOnly radius="full" variant="light">
+                <Badge
+                  color="danger"
+                  variant="solid"
+                  size="sm"
+                  content={notifications.length}
+                  isInvisible={!notifications.length}
+                >
+                  <Icon icon="bx:bx-bell" className="text-xl" />
+                </Badge>
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu>
+              {notifications.map(({ key, onPress, color, icon, label }) => (
+                <DropdownItem
+                  key={key}
+                  onPress={onPress}
+                  color={color}
+                  endContent={<Icon icon={icon} className="text-2xl" />}
+                  className={`text-${color}`}
+                >
+                  {label}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
         )}
         <Switch
           isSelected={isDark}

@@ -1,5 +1,12 @@
 import { FC } from "react";
-import { addToast, Button, Form, Input } from "@heroui/react";
+import {
+  addToast,
+  Button,
+  Form,
+  Input,
+  Select,
+  SelectItem,
+} from "@heroui/react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -12,6 +19,7 @@ interface ProfileFormData {
   birthDate: string;
   height: number;
   currentWeight: number;
+  sex: "male" | "female" | "other" | "prefer not to say";
 }
 
 const validationSchema = yup.object().shape({
@@ -31,6 +39,10 @@ const validationSchema = yup.object().shape({
     }),
   height: yup.number().required().min(0),
   currentWeight: yup.number().required().min(0),
+  sex: yup
+    .string()
+    .oneOf(["male", "female", "other", "prefer not to say"])
+    .required(),
 });
 
 const ProfileForm: FC = () => {
@@ -45,6 +57,7 @@ const ProfileForm: FC = () => {
           userDetails?.birthDate || new Date().toISOString().split("T")[0],
         height: userDetails?.height || 0,
         currentWeight: userDetails?.currentWeight || 0,
+        sex: userDetails?.sex || "prefer not to say",
       },
       resolver: yupResolver(validationSchema),
     }
@@ -61,7 +74,8 @@ const ProfileForm: FC = () => {
         if (
           userDetails?.birthDate !== profile.birthDate ||
           userDetails?.height !== profile.height ||
-          userDetails?.currentWeight !== profile.currentWeight
+          userDetails?.currentWeight !== profile.currentWeight ||
+          userDetails?.sex !== profile.sex
         ) {
           await updateUser(user.uid, profile);
           await refreshUserDetails();
@@ -87,6 +101,7 @@ const ProfileForm: FC = () => {
       label: "Nickname",
       placeholder: "Enter your nickname",
       errorMessage: formState.errors.nickname?.message,
+      isMissing: !Boolean(user?.displayName),
     },
     {
       name: "birthDate",
@@ -94,6 +109,7 @@ const ProfileForm: FC = () => {
       placeholder: "Enter your birth date",
       type: "date",
       errorMessage: formState.errors.birthDate?.message,
+      isMissing: userDetails?.birthDate === "",
     },
     {
       name: "height",
@@ -102,6 +118,7 @@ const ProfileForm: FC = () => {
       type: "number",
       endContent: "cm",
       errorMessage: formState.errors.height?.message,
+      isMissing: userDetails?.height === 0,
     },
     {
       name: "currentWeight",
@@ -110,6 +127,32 @@ const ProfileForm: FC = () => {
       type: "number",
       endContent: "kg",
       errorMessage: formState.errors.currentWeight?.message,
+      isMissing: userDetails?.currentWeight === 0,
+    },
+    {
+      name: "sex",
+      label: "Sex",
+      placeholder: "Choose your sex",
+      type: "select",
+      options: [
+        {
+          label: "Male",
+          key: "male",
+        },
+        {
+          label: "Female",
+          key: "female",
+        },
+        {
+          label: "Other",
+          key: "other",
+        },
+        {
+          label: "Prefer not to say",
+          key: "prefer not to say",
+        },
+      ],
+      errorMessage: formState.errors.sex?.message,
     },
   ];
 
@@ -118,21 +161,47 @@ const ProfileForm: FC = () => {
       className="flex flex-col items-end gap-4"
       onSubmit={handleSubmit(onSubmit)}
     >
-      {inputs.map((input) => (
-        <Input
-          key={input.name}
-          isRequired
-          label={input.label}
-          labelPlacement="outside"
-          placeholder={input.placeholder}
-          type={input.type}
-          variant="bordered"
-          endContent={input.endContent}
-          {...register(input.name as keyof ProfileFormData)}
-          isInvalid={!!input.errorMessage}
-          errorMessage={input.errorMessage}
-        />
-      ))}
+      {inputs.map((input) => {
+        if (input.type === "select") {
+          return (
+            <Select
+              items={input.options}
+              key={input.name}
+              label={input.label}
+              placeholder={input.placeholder}
+              {...register(input.name as keyof ProfileFormData)}
+            >
+              {(option) => <SelectItem>{option.label}</SelectItem>}
+            </Select>
+          );
+        }
+
+        return (
+          <Input
+            key={input.name}
+            isRequired
+            classNames={{
+              label: "flex",
+            }}
+            label={
+              <div>
+                <span>{input.label}</span>
+                {input.isMissing && (
+                  <span className="text-sm text-primary-400 ml-2">Missing</span>
+                )}
+              </div>
+            }
+            labelPlacement="outside"
+            placeholder={input.placeholder}
+            type={input.type}
+            variant="bordered"
+            endContent={input.endContent}
+            {...register(input.name as keyof ProfileFormData)}
+            isInvalid={!!input.errorMessage}
+            errorMessage={input.errorMessage}
+          />
+        );
+      })}
       {formState.isDirty && (
         <Button
           color="primary"

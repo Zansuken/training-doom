@@ -7,6 +7,7 @@ import ProtectedRoute from "./pages/auth/protected-route";
 import PlannerPage from "./pages/planner";
 import IndexPage from "./pages/home";
 import SettingsPage from "./pages/settings";
+import ExercisesPage from "./pages/exercises";
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
         <Route element={<IndexPage />} path="home" />
         <Route element={<PlannerPage />} path="planner" />
         <Route element={<AnalyticsPage />} path="analytics" />
+        <Route element={<ExercisesPage />} path="exercises" />
         <Route element={<SettingsPage />} path="settings">
           <Route path="profile" element={<h2>Account</h2>} />
           <Route path="general" element={<h2>General</h2>} />

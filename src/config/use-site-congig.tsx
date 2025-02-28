@@ -64,6 +64,11 @@ const useSiteConfig = () => {
             action: () => navigate("/analytics"),
             icon: "bx:bx-bar-chart-alt-2",
           },
+          {
+            label: "My exercises",
+            action: () => navigate("/exercises"),
+            icon: "bx:bx-dumbbell",
+          },
         ],
       },
       settings: {

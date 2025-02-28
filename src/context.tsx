@@ -9,7 +9,7 @@ import React, {
 import { daysOfWeek, DaysOfWeek, defaultProfileValues } from "./constants";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { createUser, getUser } from "./functions/user";
-import { UserDetailsType } from "./types";
+import { UserDetailsType } from "@/types/user.type";
 import { useLocation, useNavigate } from "react-router-dom";
 import { addToast } from "@heroui/react";
 

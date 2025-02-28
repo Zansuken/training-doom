@@ -1,5 +1,5 @@
 import { db } from "@/firebase";
-import { UserDetailsType } from "@/types";
+import { UserDetailsType } from "@/types/user.type";
 import { addToast } from "@heroui/react";
 import { doc, getDoc, setDoc } from "firebase/firestore/lite";
 
@@ -43,4 +43,4 @@ const updateUser = async (id: string, data: UserDetailsType) => {
   }
 };
 
-export { createUser, getUser as getUser, updateUser };
+export { createUser, getUser, updateUser };

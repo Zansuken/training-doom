@@ -3,6 +3,7 @@ import DefaultLayout from "@/layouts/default";
 import PlannerCard from "./PlannerCard";
 import AnalyticsCard from "./AnalyticsCard";
 import { Divider } from "@heroui/react";
+import ExercisesCard from "./ExercisesCard";
 
 const IndexPage: FC = () => {
   document.title = "Home";
@@ -14,6 +15,7 @@ const IndexPage: FC = () => {
       <div className="grid grid-cols-1 gap-6 mt-6 md:grid-cols-2 lg:grid-cols-3">
         <PlannerCard />
         <AnalyticsCard />
+        <ExercisesCard />
       </div>
     </DefaultLayout>
   );

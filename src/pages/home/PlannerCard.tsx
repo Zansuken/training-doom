@@ -14,6 +14,7 @@ const PlannerCard: FC = () => {
       <Listbox
         variant="faded"
         disabledKeys={["duration", "push-ups", "cardio"]}
+        aria-label="Planner"
       >
         <ListboxSection title="Duration">
           <ListboxItem

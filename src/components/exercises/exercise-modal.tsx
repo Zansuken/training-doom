@@ -1,6 +1,7 @@
 import { FC, useState } from "react";
 import {
   ExerciseDurationType,
+  ExerciseInstructionsType,
   ExerciseIntensityType,
   ExerciseType,
 } from "@/types/exercise.type";
@@ -22,6 +23,7 @@ import FieldDuration from "./fields/field-duration";
 import FieldType from "./fields/field-type";
 import FieldMuscleGroup from "./fields/field-muscle-groups";
 import FieldEquipment from "./fields/field-equipment";
+import FieldInstructions from "./fields/field-instructions";
 
 interface ExerciseModalProps {
   isOpen: boolean;
@@ -30,7 +32,12 @@ interface ExerciseModalProps {
 }
 
 type KeyType = keyof ExerciseType | keyof ExerciseType["duration"];
-type ValueType = ExerciseIntensityType | string | number | SharedSelection;
+type ValueType =
+  | ExerciseIntensityType
+  | ExerciseInstructionsType
+  | string
+  | number
+  | SharedSelection;
 
 const ExerciseModal: FC<ExerciseModalProps> = ({
   isOpen,
@@ -84,7 +91,7 @@ const ExerciseModal: FC<ExerciseModalProps> = ({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent>
         <ModalHeader title={exercise.name} />
-        <ModalBody>
+        <ModalBody className="gap-4">
           <div className="w-full flex gap-4">
             <div className="w-1/2">
               <FieldName
@@ -140,6 +147,13 @@ const ExerciseModal: FC<ExerciseModalProps> = ({
               context={context}
               description={formValues.description ?? ""}
               onChange={(e) => handleFormChange("description", e.target.value)}
+            />
+          </div>
+          <div className="w-full">
+            <FieldInstructions
+              instructions={formValues.instructions}
+              context={context}
+              onChange={(value) => handleFormChange("instructions", value)}
             />
           </div>
         </ModalBody>

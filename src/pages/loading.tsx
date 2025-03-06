@@ -6,7 +6,7 @@ const Loading: FC = () => {
   return (
     <DefaultLayout>
       <div className="flex h-full w-full items-center justify-center">
-        <CircularProgress />
+        <CircularProgress aria-label="loading-icon" />
       </div>
     </DefaultLayout>
   );

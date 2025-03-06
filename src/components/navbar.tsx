@@ -7,6 +7,7 @@ import {
   DropdownItem,
   DropdownSection,
   Badge,
+  Skeleton,
 } from "@heroui/react";
 import { Navbar as HeroUINavbar } from "@heroui/navbar";
 import { Icon } from "@iconify/react";
@@ -15,6 +16,11 @@ import useSiteConfig from "@/config/use-site-congig";
 import { useAppContext } from "@/context";
 import { useTheme } from "@/hooks/use-theme";
 import { useNavigate } from "react-router-dom";
+import IcOutlineHome from "./icons/HomeOutlined";
+import NotificationIconOutlined from "./icons/NotificationIconOutlined";
+import MoonIconOutlined from "./icons/MoonIconOutlined";
+import SunIconOutlined from "./icons/SunIconOutlined";
+import VerticalDotsIcon from "./icons/VerticalDotsIcon";
 
 const getUIDColor = (uid: string) => {
   const colors = [
@@ -36,7 +42,8 @@ const getUIDColor = (uid: string) => {
 };
 
 export const Navbar = () => {
-  const { user, notifications, userDisplayName } = useAppContext();
+  const { user, notifications, userDisplayName, isAppLoading } =
+    useAppContext();
   const { isDark, toggleTheme } = useTheme("dark");
   const { siteConfig } = useSiteConfig();
   const navigate = useNavigate();
@@ -53,21 +60,26 @@ export const Navbar = () => {
         variant="shadow"
         onPress={() => navigate("/home")}
       >
-        <Icon icon="bx:bx-home" className="text-xl" />
+        <IcOutlineHome className="text-xl" />
       </Button>
       <div className="flex items-center gap-2">
         {user && (
-          <div
-            style={{ backgroundColor: getUIDColor(user.uid) }}
-            className="rounded-full h-[28px] w-[28px] relative cursor-pointer"
-            onClick={() => navigate("/settings#profile")}
+          <Skeleton
+            isLoaded={!isAppLoading}
+            className="rounded-full h-[28px] w-[28px]"
           >
-            <span className="text-gray-800 text-md font-semibold absolute inset-0 flex items-center justify-center">
-              {userDisplayName.charAt(0).toUpperCase()}
-            </span>
-          </div>
+            <div
+              style={{ backgroundColor: getUIDColor(user.uid) }}
+              className="rounded-full h-[28px] w-[28px] relative cursor-pointer"
+              onClick={() => navigate("/settings#profile")}
+            >
+              <span className="text-gray-800 text-md font-semibold absolute inset-0 flex items-center justify-center">
+                {userDisplayName.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          </Skeleton>
         )}
-        {user && (
+        {user && notifications.length > 0 && (
           <Dropdown>
             <DropdownTrigger>
               <Button isIconOnly radius="full" variant="light">
@@ -78,7 +90,7 @@ export const Navbar = () => {
                   content={notifications.length}
                   isInvisible={!notifications.length}
                 >
-                  <Icon icon="bx:bx-bell" className="text-xl" />
+                  <NotificationIconOutlined className="text-xl" />
                 </Badge>
               </Button>
             </DropdownTrigger>
@@ -100,26 +112,24 @@ export const Navbar = () => {
         <Switch
           isSelected={isDark}
           onChange={toggleTheme}
-          thumbIcon={
-            isDark ? <Icon icon="bx:bx-moon" /> : <Icon icon="bx:bx-sun" />
-          }
+          thumbIcon={isDark ? <MoonIconOutlined /> : <SunIconOutlined />}
         />
-        {user && (
-          <Dropdown>
-            <DropdownTrigger>
-              <Button
-                isIconOnly
-                className="bg-transparent border-none"
-                color="primary"
-                variant="flat"
-                size="lg"
-                radius="full"
-              >
-                <Icon icon="bx:bx-dots-vertical-rounded" />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu>
-              {Object.values(siteConfig.navItems).map((value, index) => (
+        <Dropdown>
+          <DropdownTrigger>
+            <Button
+              isIconOnly
+              className="bg-transparent border-none"
+              color="primary"
+              variant="flat"
+              size="lg"
+              radius="full"
+            >
+              <VerticalDotsIcon />
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu>
+            {user ? (
+              Object.values(siteConfig.navItems).map((value, index) => (
                 <DropdownSection key={index} title={value.label}>
                   {value.items.map(({ action, label, color, icon }, index) => (
                     <DropdownItem
@@ -133,10 +143,27 @@ export const Navbar = () => {
                     </DropdownItem>
                   ))}
                 </DropdownSection>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
-        )}
+              ))
+            ) : (
+              <>
+                <DropdownItem
+                  key="sign-in"
+                  onPress={() => navigate("/auth/sign-in")}
+                  startContent={<Icon icon="bx:bx-log-in" />}
+                >
+                  Sign In
+                </DropdownItem>
+                <DropdownItem
+                  key="sign-up"
+                  onPress={() => navigate("/auth/sign-up")}
+                  startContent={<Icon icon="bx:bx-user-plus" />}
+                >
+                  Sign Up
+                </DropdownItem>
+              </>
+            )}
+          </DropdownMenu>
+        </Dropdown>
       </div>
     </HeroUINavbar>
   );

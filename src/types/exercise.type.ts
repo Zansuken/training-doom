@@ -18,6 +18,11 @@ export type ExerciseEquipmentType =
   | "RESISTANCE_BAND"
   | "BODYWEIGHT";
 export type ExerciseMetricType = "WEIGHT" | "REPS" | "DISTANCE" | "TIME";
+export type ExerciseInstructionType = {
+  id: string;
+  description: string;
+};
+export type ExerciseInstructionsType = ExerciseInstructionType[];
 
 export type ExerciseType = {
   id: string;
@@ -29,6 +34,6 @@ export type ExerciseType = {
   metrics: ExerciseMetricType[]; // TODO: rethink this
   duration: ExerciseDurationType;
   intensity: ExerciseIntensityType;
-  instructions: string[]; // TODO: add to form
+  instructions: ExerciseInstructionsType;
   description?: string;
 };

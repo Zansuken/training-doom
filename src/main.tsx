@@ -7,14 +7,17 @@ import App from "./App.tsx";
 import { Provider } from "./provider.tsx";
 import "@/styles/globals.css";
 import { AppContextProvider } from "./context.tsx";
+import QueryProvider from "./requests/index.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
       <Provider>
-        <AppContextProvider>
-          <App />
-        </AppContextProvider>
+        <QueryProvider>
+          <AppContextProvider>
+            <App />
+          </AppContextProvider>
+        </QueryProvider>
       </Provider>
     </BrowserRouter>
   </React.StrictMode>

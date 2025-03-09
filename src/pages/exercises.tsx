@@ -1,40 +1,43 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import Exercises from "@/components/exercises/exercises";
 import DefaultLayout from "@/layouts/default";
 import { useAppContext } from "@/context";
-import { getUserExercises } from "@/functions/exercise";
-import { ExerciseType } from "@/types/exercise.type";
 import Loading from "./loading";
 import { Tab, Tabs } from "@heroui/tabs";
 import { Icon } from "@iconify/react";
+import useExercices from "@/requests/use-exercices";
+import ExerciseForm from "@/components/exercises/exercice-form";
+import { Key } from "@react-types/shared";
+import { Alert, Button } from "@heroui/react";
+import AddIconOutlined from "@/components/icons/AddIconOutlined";
 
 const ExercisesPage: FC = () => {
   document.title = "My exercises";
 
-  const [loading, setLoading] = useState(true);
-  const [exercises, setExercises] = useState<ExerciseType[]>([]);
-
   const { user } = useAppContext();
+  const { getExercisesQuery, createExerciseMutation } = useExercices(
+    user?.uid || ""
+  );
 
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
-    getUserExercises(user.uid).then((exercises) => {
-      if (exercises) {
-        setExercises(exercises);
-      }
-      setLoading(false);
-    });
-  }, [user?.uid]);
+  const [selectedTab, setSelectedTab] = useState("exercises");
 
-  if (!user || loading) {
+  if (getExercisesQuery.isLoading) {
     return <Loading />;
   }
 
+  const exercisesNames = getExercisesQuery.data?.map(
+    (exercise) => exercise.name
+  );
+
   return (
     <DefaultLayout>
-      <Tabs aria-label="Options" color="primary" variant="bordered">
+      <Tabs
+        aria-label="Options"
+        color="primary"
+        variant="bordered"
+        selectedKey={selectedTab}
+        onSelectionChange={setSelectedTab as (key: Key) => void}
+      >
         <Tab
           key="exercises"
           title={
@@ -44,18 +47,56 @@ const ExercisesPage: FC = () => {
             </div>
           }
         >
-          <Exercises exercises={exercises} />
+          {(() => {
+            if (getExercisesQuery.data && getExercisesQuery.data.length > 0) {
+              return <Exercises exercises={getExercisesQuery.data} />;
+            }
+
+            return (
+              <div className="flex-grow flex">
+                <Alert
+                  color="primary"
+                  title="No exercises found"
+                  endContent={
+                    <Button
+                      color="primary"
+                      onPress={() => setSelectedTab("add-exercise")}
+                      startContent={<AddIconOutlined width={24} />}
+                    >
+                      Add exercise
+                    </Button>
+                  }
+                >
+                  <p className="text-default-500">
+                    You haven't added any exercise yet. Click on the Add
+                    exercise button to create one.
+                  </p>
+                </Alert>
+              </div>
+            );
+          })()}
         </Tab>
         <Tab
           key="add-exercise"
           title={
             <div className="flex items-center space-x-2">
-              <Icon icon="bx:bx-plus" className="w-6 h-6" />
+              <AddIconOutlined className="w-6 h-6" />
               <span>Add exercise</span>
             </div>
           }
         >
-          <div>Add exercise form</div>
+          <ExerciseForm
+            onSubmit={(data) =>
+              createExerciseMutation.mutate(data, {
+                onSuccess: () => {
+                  getExercisesQuery.refetch();
+                  setSelectedTab("exercises");
+                },
+              })
+            }
+            exercisesNames={exercisesNames ?? []}
+            context="CREATE"
+          />
         </Tab>
       </Tabs>
     </DefaultLayout>

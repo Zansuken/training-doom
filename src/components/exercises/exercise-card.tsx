@@ -14,8 +14,12 @@ import { capitalize } from "@/helpers/strings";
 import ExerciseModal from "./exercise-modal";
 import FieldIntensity from "./fields/field-intensity";
 import { useGetTypeIcon } from "./hooks/useGetTypeIcon";
+interface ExerciseCardProps {
+  exercise: ExerciseType;
+  exercisesNames: string[];
+}
 
-const ExerciseCard: FC<{ exercise: ExerciseType }> = ({ exercise }) => {
+const ExerciseCard: FC<ExerciseCardProps> = ({ exercise, exercisesNames }) => {
   const { name, type, intensity, duration, muscleGroups } = exercise;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,7 +41,7 @@ const ExerciseCard: FC<{ exercise: ExerciseType }> = ({ exercise }) => {
       <Divider className="w-[90%]" />
       <CardBody className="flex flex-row flex-wrap w-full">
         <div className="w-1/2">
-          <FieldIntensity intensity={intensity} context="SHOW" />
+          <FieldIntensity intensityValue={intensity} context="SHOW" />
         </div>
         <div className="w-1/2">
           <div className="flex gap-2 flex-col">
@@ -79,6 +83,7 @@ const ExerciseCard: FC<{ exercise: ExerciseType }> = ({ exercise }) => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         exercise={exercise}
+        exercisesNames={exercisesNames}
       />
     </Card>
   );

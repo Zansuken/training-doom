@@ -1,8 +1,9 @@
-import { ChangeEventHandler, FC } from "react";
-import { ExerciseIntensityType } from "@/types/exercise.type";
+import { FC } from "react";
+import { ExerciseFormData, ExerciseIntensityType } from "@/types/exercise.type";
 import { Chip, Select, SelectItem } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { capitalize } from "@/helpers/strings";
+import { Control, Controller } from "react-hook-form";
 
 const getIntensitySettings: (intensity: ExerciseIntensityType) => {
   color:
@@ -60,53 +61,62 @@ const ShowIntensity: FC<ShowIntensityProps> = ({ intensity }) => {
 };
 
 interface EditIntensityProps {
-  intensity: ExerciseIntensityType;
-  onChange?: ChangeEventHandler<HTMLSelectElement>;
+  control: Control<ExerciseFormData, any>;
+  intensityValue: ExerciseIntensityType;
 }
 
-const EditIntensity: FC<EditIntensityProps> = ({ intensity, onChange }) => {
-  const intensitySettings = getIntensitySettings(intensity);
+const EditIntensity: FC<EditIntensityProps> = ({ intensityValue, control }) => {
+  const intensitySettings = getIntensitySettings(intensityValue);
 
   const options = ["LOW", "MEDIUM", "HIGH"] as ExerciseIntensityType[];
 
   return (
-    <Select
-      onChange={onChange}
-      color={intensitySettings.color}
-      selectedKeys={[intensity]}
-      label="Intensity"
-      startContent={<Icon icon={intensitySettings.icon} width={24} />}
-    >
-      {options.map((option) => (
-        <SelectItem
-          key={option}
-          color={getIntensitySettings(option).color}
-          startContent={
-            <Icon icon={getIntensitySettings(option).icon} width={24} />
-          }
+    <Controller
+      control={control}
+      name="intensity"
+      render={({ field, fieldState, formState }) => (
+        <Select
+          color={intensitySettings.color}
+          label="Intensity"
+          startContent={<Icon icon={intensitySettings.icon} width={24} />}
+          defaultSelectedKeys={[intensityValue]}
+          isInvalid={fieldState.invalid}
+          errorMessage={formState.errors.intensity?.message}
+          isDisabled={formState.isSubmitting}
+          {...field}
         >
-          {option}
-        </SelectItem>
-      ))}
-    </Select>
+          {options.map((option) => (
+            <SelectItem
+              key={option}
+              color={getIntensitySettings(option).color}
+              startContent={
+                <Icon icon={getIntensitySettings(option).icon} width={24} />
+              }
+            >
+              {option}
+            </SelectItem>
+          ))}
+        </Select>
+      )}
+    />
   );
 };
 
 interface FieldIntensityProps {
-  intensity: ExerciseIntensityType;
-  context: "SHOW" | "EDIT";
-  onChange?: ChangeEventHandler<HTMLSelectElement>;
+  context: "SHOW" | "EDIT" | "CREATE";
+  intensityValue: ExerciseIntensityType;
+  control?: Control<ExerciseFormData, any>;
 }
 
 const FieldIntensity: FC<FieldIntensityProps> = ({
-  intensity,
   context,
-  onChange,
+  intensityValue,
+  control,
 }) => {
-  if (context === "EDIT")
-    return <EditIntensity intensity={intensity} onChange={onChange} />;
+  if (context === "EDIT" && control)
+    return <EditIntensity intensityValue={intensityValue} control={control} />;
 
-  return <ShowIntensity intensity={intensity} />;
+  return <ShowIntensity intensity={intensityValue} />;
 };
 
 export default FieldIntensity;

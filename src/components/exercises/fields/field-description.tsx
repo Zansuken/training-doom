@@ -1,24 +1,25 @@
 import { Textarea } from "@heroui/react";
-import { ChangeEventHandler, FC } from "react";
+import { FC } from "react";
+import { FieldError } from "react-hook-form";
 
 interface FieldDescriptionProps {
-  description: string;
-  context: "SHOW" | "EDIT";
-  onChange?: ChangeEventHandler<HTMLInputElement>;
+  context: "SHOW" | "EDIT" | "CREATE";
+  error?: FieldError;
 }
 
 const FieldDescription: FC<FieldDescriptionProps> = ({
-  description,
   context,
-  onChange,
+  error,
+  ...registered
 }) => {
   return (
     <Textarea
-      isReadOnly={context === "SHOW"}
-      value={description}
-      onChange={onChange}
+      isDisabled={context === "SHOW"}
       label="Description"
       variant="bordered"
+      isInvalid={Boolean(error)}
+      errorMessage={error?.message}
+      {...registered}
     />
   );
 };

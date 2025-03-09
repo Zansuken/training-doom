@@ -1,20 +1,21 @@
 import { Input } from "@heroui/react";
-import { ChangeEventHandler, FC } from "react";
+import { FC } from "react";
+import { FieldError } from "react-hook-form";
 
 interface FieldNameProps {
-  name: string;
-  context: "SHOW" | "EDIT";
-  onChange?: ChangeEventHandler<HTMLInputElement>;
+  context: "SHOW" | "EDIT" | "CREATE";
+  error?: FieldError;
 }
 
-const FieldName: FC<FieldNameProps> = ({ name, context, onChange }) => {
+const FieldName: FC<FieldNameProps> = ({ context, error, ...registered }) => {
   return (
     <Input
-      isReadOnly={context === "SHOW"}
-      value={name}
-      onChange={onChange}
+      isDisabled={context === "SHOW"}
       label="Name"
       variant="bordered"
+      isInvalid={Boolean(error)}
+      errorMessage={error?.message}
+      {...registered}
     />
   );
 };

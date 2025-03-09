@@ -1,9 +1,10 @@
 import { Button, Form, Input } from "@heroui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Icon } from "@iconify/react";
 import { FC, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
+import EyeClosedIconOutlined from "./icons/EyeClosedIconOutlined";
+import EyeOpenIconOutlined from "./icons/EyeOpenIconOutlined";
 
 export interface SignUpFormData {
   email: string;
@@ -77,15 +78,9 @@ const SignUpForm: FC<SignUpFormProps> = ({ onSubmit }) => {
         endContent={
           <button type="button" onClick={toggleVisibility}>
             {isVisible ? (
-              <Icon
-                className="pointer-events-none text-2xl text-default-400"
-                icon="solar:eye-closed-linear"
-              />
+              <EyeClosedIconOutlined className="pointer-events-none text-2xl text-default-400" />
             ) : (
-              <Icon
-                className="pointer-events-none text-2xl text-default-400"
-                icon="solar:eye-bold"
-              />
+              <EyeOpenIconOutlined className="pointer-events-none text-2xl text-default-400" />
             )}
           </button>
         }

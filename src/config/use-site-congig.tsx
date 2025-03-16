@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import DumbbellIcon from "@/components/icons/DumbbellIcon";
 import ChartIcon from "@/components/icons/ChartIcon";
 import SettingsIcon from "@/components/icons/SettingsIcon";
+import SignOutIcon from "@/components/icons/SignOutIcon";
 
 type NavItem = {
   label: string;
@@ -89,7 +90,7 @@ const useSiteConfig = () => {
             label: "Logout",
             action: () => logout(),
             color: "danger",
-            icon: "bx:bx-log-out",
+            icon: <SignOutIcon className="w-4 h-4" />,
           },
         ],
       },

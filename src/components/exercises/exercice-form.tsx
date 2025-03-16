@@ -12,6 +12,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Switch,
 } from "@heroui/react";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import FieldType from "./fields/field-type";
@@ -23,6 +24,7 @@ import FieldInstructions from "./fields/field-instructions";
 import useExercices from "@/requests/use-exercices";
 import TrashIconOutlined from "../icons/TrashIconOutlined";
 import EditIconOutlined from "../icons/EditIconOutlined";
+import RestoreIcon from "../icons/RestoreIcon";
 
 interface ExerciseFormProps {
   editDefaultValues?: ExerciseFormData;
@@ -86,7 +88,7 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
       .max(500, "The exercise description must be at most 500 characters long"),
   });
 
-  const { register, handleSubmit, formState, watch, control, setValue } =
+  const { register, handleSubmit, formState, watch, control, setValue, reset } =
     useForm<ExerciseFormData>({
       mode: "onBlur",
       reValidateMode: "onChange",
@@ -102,12 +104,29 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
         className="w-full flex flex-col gap-4"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="w-1/2 pr-2">
-          <FieldName
-            context={context ?? "EDIT"}
-            error={formState.errors.name}
-            {...register("name")}
-          />
+        <div className="w-full flex gap-4">
+          <div className="w-1/2 pr-2">
+            <FieldName
+              context={context ?? "EDIT"}
+              error={formState.errors.name}
+              {...register("name")}
+            />
+          </div>
+          <div className="w-1/2 pr-2 flex items-baseline justify-end">
+            <Switch
+              isSelected={context !== "SHOW"}
+              onChange={() => {
+                if (context === "SHOW") {
+                  setContext("EDIT");
+                } else {
+                  setContext("SHOW");
+                  reset();
+                }
+              }}
+              startContent={<RestoreIcon />}
+              endContent={<EditIconOutlined />}
+            />
+          </div>
         </div>
         <div className="w-full flex gap-4">
           <div className="w-1/2">
@@ -187,62 +206,55 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
             );
           }
         })()}
-        {context === "EDIT" && exercise?.id && (
-          <Modal
-            isOpen={isDeleteModalOpen}
-            onClose={() => setIsDeleteModalOpen(false)}
-          >
-            <ModalContent>
-              <ModalHeader title="Delete Exercise" />
-              <ModalBody>
-                <Alert color="warning" title="Are you sure?">
-                  <p className="text-sm text-default-500">
-                    This action cannot be undone. This will permanently delete
-                    the exercise.
-                  </p>
-                </Alert>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  onPress={() => setIsDeleteModalOpen(false)}
-                  variant="bordered"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onPress={() => {
-                    deleteExerciseMutation.mutate(exercise.id);
-                    setIsDeleteModalOpen(false);
-                  }}
-                  color="danger"
-                  variant="bordered"
-                >
-                  Delete
-                </Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
+        {context === "SHOW" && (
+          <div className="w-full flex gap-2 justify-end pb-2">
+            <Button
+              onPress={() => setIsDeleteModalOpen(true)}
+              color="danger"
+              variant="bordered"
+              startContent={<TrashIconOutlined width={16} />}
+            >
+              Delete
+            </Button>
+          </div>
         )}
       </form>
-      {context === "SHOW" && (
-        <div className="w-full flex gap-2 justify-end pb-2">
-          <Button
-            onPress={() => setIsDeleteModalOpen(true)}
-            color="danger"
-            variant="bordered"
-            startContent={<TrashIconOutlined width={16} />}
-          >
-            Delete
-          </Button>
-          <Button
-            onPress={() => setContext("EDIT")}
-            color="primary"
-            startContent={<EditIconOutlined width={16} />}
-            type="button"
-          >
-            Edit
-          </Button>
-        </div>
+      {exercise?.id && (
+        <Modal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          placement="center"
+        >
+          <ModalContent>
+            <ModalHeader title="Delete Exercise" />
+            <ModalBody>
+              <Alert color="warning" title="Are you sure?">
+                <p className="text-sm text-default-500">
+                  This action cannot be undone. This will permanently delete the
+                  exercise.
+                </p>
+              </Alert>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                onPress={() => setIsDeleteModalOpen(false)}
+                variant="bordered"
+              >
+                Cancel
+              </Button>
+              <Button
+                onPress={() => {
+                  deleteExerciseMutation.mutate(exercise.id);
+                  setIsDeleteModalOpen(false);
+                }}
+                color="danger"
+                variant="bordered"
+              >
+                Delete
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       )}
     </>
   );

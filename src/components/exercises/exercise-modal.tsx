@@ -4,6 +4,7 @@ import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/react";
 import ExerciseForm from "./exercice-form";
 import { SubmitHandler } from "react-hook-form";
 import useExercices from "@/requests/use-exercices";
+import useViewport from "@/hooks/use-viewport";
 
 interface ExerciseModalProps {
   isOpen: boolean;
@@ -32,6 +33,7 @@ const ExerciseModal: FC<ExerciseModalProps> = ({
     type: exercise.type,
   };
 
+  const { isMobile } = useViewport();
   const { updateExerciseMutation } = useExercices(exercise.userId);
 
   const onSubmit: SubmitHandler<ExerciseFormData> = (data) => {
@@ -53,7 +55,13 @@ const ExerciseModal: FC<ExerciseModalProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} backdrop="blur">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      backdrop="blur"
+      placement={isMobile ? "top" : "center"}
+      hideCloseButton
+    >
       <ModalContent>
         <ModalHeader title={exercise.name} />
         <ModalBody className="gap-4">

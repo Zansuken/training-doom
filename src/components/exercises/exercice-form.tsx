@@ -155,7 +155,7 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
   return (
     <>
       <form
-        className="w-full flex flex-col gap-4 mt-6"
+        className="w-full flex flex-col gap-4"
         onSubmit={handleSubmit(submit)}
       >
         <div className="w-full flex gap-4">
@@ -174,7 +174,7 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
               isLoading={getExercisesNamesQuery.isLoading}
             />
           </div>
-          <div className="absolute top-4 right-4">
+          <div className="absolute bottom-4 left-4">
             {context !== "CREATE" && (
               <Switch
                 isSelected={context !== "SHOW"}

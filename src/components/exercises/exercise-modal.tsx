@@ -86,7 +86,6 @@ const ExerciseModal: FC<ExerciseModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       placement="center"
-      hideCloseButton
       className="relative"
     >
       <ModalContent>

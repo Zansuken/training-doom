@@ -31,8 +31,7 @@ export type ExerciseType = {
   type: ExerciseTypeType;
   muscleGroups: ExerciseMuscleGroupType[];
   equipment: ExerciseEquipmentType[];
-  metrics: ExerciseMetricType[]; // TODO: rethink this
-  duration: ExerciseDurationType;
+  metrics: ExerciseMetricType;
   intensity: ExerciseIntensityType;
   instructions: ExerciseInstructionsType;
   description?: string;
@@ -43,8 +42,7 @@ export interface ExerciseFormData {
   type: ExerciseTypeType;
   muscleGroups: ExerciseMuscleGroupType[];
   equipment: ExerciseEquipmentType[];
-  metrics: ExerciseMetricType[]; // TODO: rethink this
-  duration: ExerciseDurationType;
+  metrics: ExerciseMetricType;
   intensity: ExerciseIntensityType;
   instructions: ExerciseInstructionsType;
   description?: string;

@@ -119,7 +119,7 @@ const FieldIntensity: FC<FieldIntensityProps> = ({
   control,
   isLoading,
 }) => {
-  if (context === "EDIT" && control)
+  if (context !== "SHOW" && control)
     return <EditIntensity intensityValue={intensityValue} control={control} />;
 
   return <ShowIntensity intensity={intensityValue} isLoading={isLoading} />;

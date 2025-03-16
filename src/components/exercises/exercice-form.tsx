@@ -16,7 +16,6 @@ import {
 } from "@heroui/react";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import FieldType from "./fields/field-type";
-import FieldDuration from "./fields/field-duration";
 import FieldMuscleGroups from "./fields/field-muscle-groups";
 import FieldEquipment from "./fields/field-equipment";
 import FieldDescription from "./fields/field-description";
@@ -28,6 +27,7 @@ import RestoreIcon from "../icons/RestoreIcon";
 import { useQuery } from "@tanstack/react-query";
 import { useAppContext } from "@/context";
 import Loading from "@/pages/loading";
+import FieldMetrics from "./fields/field-metrics";
 
 interface ExerciseFormProps {
   editDefaultValues?: ExerciseFormData;
@@ -58,11 +58,10 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
 
   const defaultValues: ExerciseFormData = editDefaultValues ?? {
     description: "",
-    duration: { time: 0, unit: "SECONDS" },
     equipment: [],
     intensity: "LOW",
     instructions: [],
-    metrics: [],
+    metrics: "TIME",
     muscleGroups: [],
     name: "",
     type: "STRENGTH",
@@ -86,11 +85,7 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
     type: yup.mixed<ExerciseFormData["type"]>().required(),
     muscleGroups: yup.array<ExerciseFormData["muscleGroups"]>().required(),
     equipment: yup.array<ExerciseFormData["equipment"]>().required(),
-    metrics: yup.array<ExerciseFormData["metrics"]>().required(),
-    duration: yup.object().shape({
-      time: yup.number().required(),
-      unit: yup.mixed<ExerciseFormData["duration"]["unit"]>().required(),
-    }),
+    metrics: yup.mixed<ExerciseFormData["metrics"]>().required(),
     intensity: yup.mixed<ExerciseFormData["intensity"]>().required(),
     instructions: yup.array<ExerciseFormData["instructions"]>().required(),
     description: yup
@@ -115,18 +110,26 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
   return (
     <>
       <form
-        className="w-full flex flex-col gap-4"
+        className="w-full flex flex-col gap-4 mt-6"
         onSubmit={handleSubmit(onSubmit)}
       >
         <div className="w-full flex gap-4">
-          <div className="w-1/2 pr-2">
+          <div className="w-1/2">
             <FieldName
               context={context ?? "EDIT"}
               error={formState.errors.name}
               {...register("name")}
             />
           </div>
-          <div className="w-1/2 pr-2 flex items-baseline justify-end">
+          <div className="w-1/2">
+            <FieldIntensity
+              context={context ?? "EDIT"}
+              intensityValue={watch("intensity")}
+              control={control}
+              isLoading={getExercisesNamesQuery.isLoading}
+            />
+          </div>
+          <div className="absolute top-4 right-4">
             {context !== "CREATE" && (
               <Switch
                 isSelected={context !== "SHOW"}
@@ -153,20 +156,13 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
             />
           </div>
           <div className="w-1/2">
-            <FieldIntensity
+            <FieldMetrics
               context={context ?? "EDIT"}
-              intensityValue={watch("intensity")}
+              typeValue={watch("metrics")}
               control={control}
-              isLoading={getExercisesNamesQuery.isLoading}
             />
           </div>
         </div>
-        <FieldDuration
-          context={context ?? "EDIT"}
-          durationValue={watch("duration")}
-          control={control}
-          setValue={setValue}
-        />
         <div className="w-full">
           <FieldMuscleGroups
             context={context ?? "EDIT"}

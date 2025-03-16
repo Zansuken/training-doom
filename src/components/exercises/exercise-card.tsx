@@ -21,7 +21,7 @@ interface ExerciseCardProps {
 }
 
 const ExerciseCard: FC<ExerciseCardProps> = ({ exercise, isLoading }) => {
-  const { name, type, intensity, duration } = exercise;
+  const { name, type, intensity, metrics } = exercise;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -56,13 +56,13 @@ const ExerciseCard: FC<ExerciseCardProps> = ({ exercise, isLoading }) => {
         </div>
         <div className="w-1/2">
           <div className="flex gap-2 flex-col">
-            <h3 className="text-md leading-[1]">Duration</h3>
+            <h3 className="text-md leading-[1]">Metrics</h3>
             <Skeleton
               isLoaded={!isLoading}
               className="w-3/4 h-[24px] mt-1 rounded-lg"
             >
               <Chip className="rounded-lg">
-                <p className="text-medium">{`${duration.time} ${duration.unit.toLowerCase()}`}</p>
+                <p className="text-medium">{metrics}</p>
               </Chip>
             </Skeleton>
           </div>

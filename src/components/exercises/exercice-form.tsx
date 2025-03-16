@@ -15,7 +15,7 @@ import {
   ModalHeader,
   Switch,
 } from "@heroui/react";
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction, useRef, useState } from "react";
 import FieldType from "./fields/field-type";
 import FieldMuscleGroups from "./fields/field-muscle-groups";
 import FieldEquipment from "./fields/field-equipment";
@@ -68,6 +68,13 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
     type: "STRENGTH",
   };
 
+  const instructionsRef = useRef(defaultValues.instructions);
+
+  const submit: SubmitHandler<ExerciseFormData> = (data) => {
+    onSubmit(data);
+    instructionsRef.current = data.instructions;
+  };
+
   const validationSchema = yup.object<ExerciseFormData>().shape({
     name: yup
       .string()
@@ -88,7 +95,20 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
     equipment: yup.array<ExerciseFormData["equipment"]>().required(),
     metrics: yup.mixed<ExerciseFormData["metrics"]>().required(),
     intensity: yup.mixed<ExerciseFormData["intensity"]>().required(),
-    instructions: yup.array<ExerciseFormData["instructions"]>().required(),
+    instructions: yup
+      .array<ExerciseFormData["instructions"]>()
+      .test(
+        "no-empty-instructions",
+        "One or more instructions are empty",
+        (value = []) => {
+          const instructionsValid = value.every(
+            (instruction) => instruction.description.length > 0
+          );
+
+          return instructionsValid;
+        }
+      )
+      .required(),
     description: yup
       .string()
       .max(500, "The exercise description must be at most 500 characters long"),
@@ -101,6 +121,11 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
       defaultValues: editDefaultValues ?? defaultValues,
       resolver: yupResolver(validationSchema),
     });
+
+  const onCancel = () => {
+    setContext("SHOW");
+    reset(defaultValues);
+  };
 
   const queryClient = useQueryClient();
 
@@ -131,7 +156,7 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
     <>
       <form
         className="w-full flex flex-col gap-4 mt-6"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(submit)}
       >
         <div className="w-full flex gap-4">
           <div className="w-1/2">
@@ -208,8 +233,10 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
           <FieldInstructions
             context={context ?? "EDIT"}
             instructionsValue={watch("instructions")}
+            instructionsRef={instructionsRef}
             setValue={setValue}
             control={control}
+            error={formState.errors.instructions}
           />
         </div>
         {(() => {
@@ -229,7 +256,7 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
           if (context === "EDIT") {
             return (
               <div className="w-full flex gap-2 justify-end pb-2">
-                <Button onPress={() => setContext("SHOW")} variant="bordered">
+                <Button onPress={onCancel} variant="bordered">
                   Cancel
                 </Button>
                 <Button type="submit" color="primary">

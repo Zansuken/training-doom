@@ -1,5 +1,4 @@
 import { FC, useRef } from "react";
-import { Icon } from "@iconify/react";
 import {
   ExerciseFormData,
   ExerciseInstructionsType,
@@ -16,6 +15,9 @@ import { generateId } from "@/helpers/ids";
 import NumberOutlined from "@/components/icons/NumbersOutlined";
 import { Control, Controller, UseFormSetValue } from "react-hook-form";
 import NumberedListIcon from "@/components/icons/NumberedListIcon";
+import AddIconOutlined from "@/components/icons/AddIconOutlined";
+import RestoreIcon from "@/components/icons/RestoreIcon";
+import MinusIcon from "@/components/icons/MinusIcon";
 
 const MAX_INSTRUCTIONS = 9;
 
@@ -65,6 +67,8 @@ const FieldInstructions: FC<FieldInstructionsProps> = ({
   };
 
   const isAddDisabled = instructionsValue.length >= MAX_INSTRUCTIONS;
+  const isActive = context === "CREATE" || context === "EDIT";
+
   if (instructionsValue.length === 0) {
     return (
       <div className="flex flex-col gap-3">
@@ -73,12 +77,12 @@ const FieldInstructions: FC<FieldInstructionsProps> = ({
           color="primary"
           variant="faded"
           endContent={
-            context === "EDIT" && (
+            isActive && (
               <Button
                 onPress={addInstruction}
                 color="primary"
                 size="sm"
-                startContent={<Icon icon="akar-icons:plus" width={16} />}
+                startContent={<AddIconOutlined className="w-5 h-5" />}
                 isDisabled={isAddDisabled}
               >
                 Add Step
@@ -95,14 +99,14 @@ const FieldInstructions: FC<FieldInstructionsProps> = ({
       name="instructions"
       render={(field) => (
         <div className="flex flex-col gap-3">
-          {context === "EDIT" && (
+          {isActive && (
             <div className="flex justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Button
                   onPress={addInstruction}
                   color="primary"
                   size="sm"
-                  startContent={<Icon icon="akar-icons:plus" width={16} />}
+                  startContent={<AddIconOutlined className="w-5 h-5" />}
                   isDisabled={isAddDisabled}
                 >
                   Add Step
@@ -129,7 +133,7 @@ const FieldInstructions: FC<FieldInstructionsProps> = ({
                     variant="bordered"
                     onPress={resetInstructions}
                   >
-                    <Icon icon="mdi:restore" width={16} />
+                    <RestoreIcon className="w-4 h-4" />
                   </Button>
                 </div>
               )}
@@ -140,8 +144,7 @@ const FieldInstructions: FC<FieldInstructionsProps> = ({
             variant="bordered"
             itemClasses={{
               indicator:
-                context === "EDIT" &&
-                "!transform-none !rotate-0 !transition-none",
+                isActive && "!transform-none !rotate-0 !transition-none",
             }}
             className="max-h-60 overflow-y-auto"
           >
@@ -150,7 +153,7 @@ const FieldInstructions: FC<FieldInstructionsProps> = ({
                 key={index}
                 title={<NumberOutlined number={index + 1} />}
                 indicator={() =>
-                  context === "EDIT" && (
+                  isActive && (
                     <div
                       className="flex items-center justify-center cursor-pointer w-8 h-8 hover:bg-danger-100 rounded-md"
                       onClick={(e) => {
@@ -160,11 +163,7 @@ const FieldInstructions: FC<FieldInstructionsProps> = ({
                         return false;
                       }}
                     >
-                      <Icon
-                        icon="akar-icons:minus"
-                        width={16}
-                        className="text-danger"
-                      />
+                      <MinusIcon className="text-danger w-4 h-4" />
                     </div>
                   )
                 }

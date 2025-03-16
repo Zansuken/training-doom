@@ -12,6 +12,7 @@ import {
   Legend,
 } from "chart.js";
 import { daysOfWeek } from "@/constants";
+import ChartIcon from "@/components/icons/ChartIcon";
 
 ChartJS.register(
   CategoryScale,
@@ -51,7 +52,7 @@ const AnalyticsCard: FC = () => {
     <HomeCard
       title="Analytics"
       subtitle="Track your progress"
-      icon="bx:bx-line-chart"
+      icon={<ChartIcon className="w-11 h-11" />}
       link="/analytics"
     >
       <div className="h-full">

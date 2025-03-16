@@ -4,6 +4,8 @@ import React, {
   useState,
   ReactNode,
   useEffect,
+  FC,
+  SVGProps,
 } from "react";
 
 import { daysOfWeek, DaysOfWeek, defaultProfileValues } from "./constants";
@@ -12,6 +14,7 @@ import { createUser, getUser } from "./functions/user";
 import { UserDetailsType } from "@/types/user.type";
 import { useLocation, useNavigate } from "react-router-dom";
 import { addToast } from "@heroui/react";
+import PersonEditIcon from "@/components/icons/PersonEditIcon";
 
 type PlannerViewType = "week" | "month";
 
@@ -19,7 +22,7 @@ type NotificationType = {
   key: string;
   onPress: () => void;
   color: "danger" | "default" | "primary" | "secondary" | "success" | "warning";
-  icon: string;
+  Icon: FC<SVGProps<SVGSVGElement>>;
   label: string;
 };
 
@@ -85,7 +88,7 @@ export const AppContextProvider: React.FC<{ children: ReactNode }> = ({
             key: "incomplete-profile",
             onPress: () => navigate("/settings#profile"),
             color: "primary",
-            icon: "mdi:person-edit",
+            Icon: PersonEditIcon,
             label: "Complete your profile",
           };
 

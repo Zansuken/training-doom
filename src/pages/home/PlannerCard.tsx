@@ -1,14 +1,17 @@
 import { FC } from "react";
 import HomeCard from "@/components/home-card";
 import { Listbox, ListboxItem, ListboxSection } from "@heroui/react";
-import { Icon } from "@iconify/react";
+import DumbbellIcon from "@/components/icons/DumbbellIcon";
+import CalendarIcon from "@/components/icons/CalendarIcon";
+import RunIcon from "@/components/icons/RunIcon";
+import TimeIconOutlined from "@/components/icons/TimeIconOutlined";
 
 const PlannerCard: FC = () => {
   return (
     <HomeCard
       title="Planner"
       subtitle="Daily session"
-      icon="bx:bx-calendar"
+      icon={<CalendarIcon className="w-11 h-11" />}
       link="/planner"
     >
       <Listbox
@@ -20,7 +23,7 @@ const PlannerCard: FC = () => {
           <ListboxItem
             key="duration"
             isReadOnly
-            startContent={<Icon icon="bx:bx-time" />}
+            startContent={<TimeIconOutlined />}
           >
             1h
           </ListboxItem>
@@ -29,15 +32,11 @@ const PlannerCard: FC = () => {
           <ListboxItem
             key="push-ups"
             isReadOnly
-            startContent={<Icon icon="bx:bx-dumbbell" />}
+            startContent={<DumbbellIcon />}
           >
             Push-ups
           </ListboxItem>
-          <ListboxItem
-            key="cardio"
-            isReadOnly
-            startContent={<Icon icon="mdi:run-fast" />}
-          >
+          <ListboxItem key="cardio" isReadOnly startContent={<RunIcon />}>
             Cardio
           </ListboxItem>
         </ListboxSection>

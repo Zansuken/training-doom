@@ -4,12 +4,12 @@ import DefaultLayout from "@/layouts/default";
 import { useAppContext } from "@/context";
 import Loading from "./loading";
 import { Tab, Tabs } from "@heroui/tabs";
-import { Icon } from "@iconify/react";
 import useExercices from "@/requests/use-exercices";
 import ExerciseForm from "@/components/exercises/exercice-form";
 import { Key } from "@react-types/shared";
 import { Alert, Button } from "@heroui/react";
 import AddIconOutlined from "@/components/icons/AddIconOutlined";
+import DumbbellIcon from "@/components/icons/DumbbellIcon";
 
 const ExercisesPage: FC = () => {
   document.title = "My exercises";
@@ -42,7 +42,7 @@ const ExercisesPage: FC = () => {
           key="exercises"
           title={
             <div className="flex items-center space-x-2">
-              <Icon icon="bx:bx-dumbbell" className="w-6 h-6" />
+              <DumbbellIcon className="w-6 h-6" />
               <span>My exercises</span>
             </div>
           }

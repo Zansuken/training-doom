@@ -1,12 +1,11 @@
 import { Card, CardBody, CardHeader, Divider } from "@heroui/react";
-import { Icon } from "@iconify/react";
 import { FC, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface HomeCardProps {
   title: string;
   subtitle?: string;
-  icon: string;
+  icon: ReactNode;
   link: string;
   children?: ReactNode;
 }
@@ -28,7 +27,7 @@ const HomeCard: FC<HomeCardProps> = ({
       title="View details"
     >
       <CardHeader className="flex gap-3">
-        <Icon icon={icon} className="text-4xl" />
+        {icon}
         <div className="flex flex-col items-start">
           <p className="text-md">{title}</p>
           {subtitle && (

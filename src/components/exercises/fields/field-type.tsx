@@ -1,7 +1,6 @@
 import { FC } from "react";
 import { ExerciseFormData, ExerciseTypeType } from "@/types/exercise.type";
 import { Select, SelectItem } from "@heroui/react";
-import { Icon } from "@iconify/react";
 import { useGetTypeIcon } from "../hooks/useGetTypeIcon";
 import { Control, Controller } from "react-hook-form";
 
@@ -27,13 +26,19 @@ const FieldType: FC<FieldTypeProps> = ({ typeValue, context, control }) => {
           label="Type"
           fullWidth
           isDisabled={context === "SHOW"}
-          startContent={<Icon icon={getTypeIcon(typeValue)} width={16} />}
+          startContent={(() => {
+            const Icon = getTypeIcon(typeValue);
+            return <Icon className="w-6 h-6" />;
+          })()}
           {...field}
         >
           {options.map((option) => (
             <SelectItem
               key={option}
-              startContent={<Icon icon={getTypeIcon(option)} width={16} />}
+              startContent={(() => {
+                const Icon = getTypeIcon(option);
+                return <Icon className="w-6 h-6" />;
+              })()}
             >
               {option}
             </SelectItem>

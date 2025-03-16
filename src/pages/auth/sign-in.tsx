@@ -1,10 +1,11 @@
 import { FC, useState } from "react";
 import { Button, Input, Checkbox, Link, Form } from "@heroui/react";
-import { Icon } from "@iconify/react";
 import DefaultLayout from "@/layouts/default";
 import { useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import EyeOpenIconOutlined from "@/components/icons/EyeOpenIconOutlined";
+import EyeClosedIconOutlined from "@/components/icons/EyeClosedIconOutlined";
 
 type SignInFormData = {
   email: string;
@@ -69,15 +70,9 @@ const SignIn: FC = () => {
               endContent={
                 <button type="button" onClick={toggleVisibility}>
                   {isVisible ? (
-                    <Icon
-                      className="pointer-events-none text-2xl text-default-400"
-                      icon="solar:eye-closed-linear"
-                    />
+                    <EyeOpenIconOutlined className="pointer-events-none text-2xl text-default-400" />
                   ) : (
-                    <Icon
-                      className="pointer-events-none text-2xl text-default-400"
-                      icon="solar:eye-bold"
-                    />
+                    <EyeClosedIconOutlined className="pointer-events-none text-2xl text-default-400" />
                   )}
                 </button>
               }

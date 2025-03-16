@@ -10,17 +10,18 @@ import {
   Skeleton,
 } from "@heroui/react";
 import { Navbar as HeroUINavbar } from "@heroui/navbar";
-import { Icon } from "@iconify/react";
 
 import useSiteConfig from "@/config/use-site-congig";
 import { useAppContext } from "@/context";
 import { useTheme } from "@/hooks/use-theme";
 import { useNavigate } from "react-router-dom";
-import IcOutlineHome from "./icons/HomeOutlined";
+import HomeIconOutlined from "./icons/HomeIconOutlined";
 import NotificationIconOutlined from "./icons/NotificationIconOutlined";
 import MoonIconOutlined from "./icons/MoonIconOutlined";
 import SunIconOutlined from "./icons/SunIconOutlined";
 import VerticalDotsIcon from "./icons/VerticalDotsIcon";
+import SignInIcon from "./icons/SignInIcon";
+import SignUpIcon from "./icons/SignUpIcon";
 
 const getUIDColor = (uid: string) => {
   const colors = [
@@ -60,7 +61,7 @@ export const Navbar = () => {
         variant="shadow"
         onPress={() => navigate("/home")}
       >
-        <IcOutlineHome className="text-xl" />
+        <HomeIconOutlined className="text-xl" />
       </Button>
       <div className="flex items-center gap-2">
         {user && (
@@ -95,12 +96,12 @@ export const Navbar = () => {
               </Button>
             </DropdownTrigger>
             <DropdownMenu>
-              {notifications.map(({ key, onPress, color, icon, label }) => (
+              {notifications.map(({ key, onPress, color, Icon, label }) => (
                 <DropdownItem
                   key={key}
                   onPress={onPress}
                   color={color}
-                  endContent={<Icon icon={icon} className="text-2xl" />}
+                  endContent={<Icon />}
                   className={`text-${color}`}
                 >
                   {label}
@@ -136,7 +137,7 @@ export const Navbar = () => {
                       key={index}
                       onPress={action}
                       color={color}
-                      startContent={icon && <Icon icon={icon} />}
+                      startContent={icon && icon}
                       className={`text-${color}`}
                     >
                       {label}
@@ -149,14 +150,14 @@ export const Navbar = () => {
                 <DropdownItem
                   key="sign-in"
                   onPress={() => navigate("/auth/sign-in")}
-                  startContent={<Icon icon="bx:bx-log-in" />}
+                  startContent={<SignInIcon />}
                 >
                   Sign In
                 </DropdownItem>
                 <DropdownItem
                   key="sign-up"
                   onPress={() => navigate("/auth/sign-up")}
-                  startContent={<Icon icon="bx:bx-user-plus" />}
+                  startContent={<SignUpIcon />}
                 >
                   Sign Up
                 </DropdownItem>

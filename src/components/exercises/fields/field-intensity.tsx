@@ -1,9 +1,12 @@
-import { FC } from "react";
+import { FC, SVGProps } from "react";
 import { ExerciseFormData, ExerciseIntensityType } from "@/types/exercise.type";
 import { Chip, Select, SelectItem } from "@heroui/react";
-import { Icon } from "@iconify/react";
+import DevilIcon from "@/components/icons/DevilIcon";
 import { capitalize } from "@/helpers/strings";
 import { Control, Controller } from "react-hook-form";
+import PoopIcon from "@/components/icons/PoopIcon";
+import NeutralFaceIcon from "@/components/icons/NeutralFaceIcon";
+import CoolFaceIcon from "@/components/icons/CoolFaceIcon";
 
 const getIntensitySettings: (intensity: ExerciseIntensityType) => {
   color:
@@ -14,28 +17,28 @@ const getIntensitySettings: (intensity: ExerciseIntensityType) => {
     | "primary"
     | "secondary"
     | undefined;
-  icon: string;
+  Icon: FC<SVGProps<SVGSVGElement>>;
 } = (intensity) => {
   switch (intensity) {
     case "LOW":
       return {
         color: "success",
-        icon: "mdi:emoticon-cool-outline",
+        Icon: CoolFaceIcon,
       };
     case "MEDIUM":
       return {
         color: "warning",
-        icon: "mdi:emoticon-neutral-outline",
+        Icon: NeutralFaceIcon,
       };
     case "HIGH":
       return {
         color: "danger",
-        icon: "mdi:emoticon-devil-outline",
+        Icon: DevilIcon,
       };
     default:
       return {
         color: "default",
-        icon: "mdi:emoticon-poop-outline",
+        Icon: PoopIcon,
       };
   }
 };
@@ -45,15 +48,12 @@ interface ShowIntensityProps {
 }
 
 const ShowIntensity: FC<ShowIntensityProps> = ({ intensity }) => {
-  const intensitySettings = getIntensitySettings(intensity);
+  const { color, Icon } = getIntensitySettings(intensity);
 
   return (
     <div className="h-[56px] flex justify-between flex-col">
       <h3 className="text-md leading-[1]">Intensity</h3>
-      <Chip
-        color={intensitySettings.color}
-        startContent={<Icon icon={intensitySettings.icon} width={24} />}
-      >
+      <Chip color={color} startContent={<Icon />}>
         <span className="text-medium">{capitalize(intensity)}</span>
       </Chip>
     </div>
@@ -66,7 +66,7 @@ interface EditIntensityProps {
 }
 
 const EditIntensity: FC<EditIntensityProps> = ({ intensityValue, control }) => {
-  const intensitySettings = getIntensitySettings(intensityValue);
+  const { color, Icon } = getIntensitySettings(intensityValue);
 
   const options = ["LOW", "MEDIUM", "HIGH"] as ExerciseIntensityType[];
 
@@ -76,9 +76,9 @@ const EditIntensity: FC<EditIntensityProps> = ({ intensityValue, control }) => {
       name="intensity"
       render={({ field, fieldState, formState }) => (
         <Select
-          color={intensitySettings.color}
+          color={color}
           label="Intensity"
-          startContent={<Icon icon={intensitySettings.icon} width={24} />}
+          startContent={<Icon />}
           defaultSelectedKeys={[intensityValue]}
           isInvalid={fieldState.invalid}
           errorMessage={formState.errors.intensity?.message}
@@ -89,9 +89,10 @@ const EditIntensity: FC<EditIntensityProps> = ({ intensityValue, control }) => {
             <SelectItem
               key={option}
               color={getIntensitySettings(option).color}
-              startContent={
-                <Icon icon={getIntensitySettings(option).icon} width={24} />
-              }
+              startContent={(() => {
+                const { Icon } = getIntensitySettings(option);
+                return <Icon />;
+              })()}
             >
               {option}
             </SelectItem>

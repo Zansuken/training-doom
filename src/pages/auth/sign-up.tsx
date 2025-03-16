@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Button } from "@heroui/react";
+import { addToast, Button } from "@heroui/react";
 import DefaultLayout from "@/layouts/default";
 import { useNavigate } from "react-router-dom";
 import { SubmitHandler } from "react-hook-form";
@@ -27,8 +27,14 @@ const SignUp: FC = () => {
       );
       await updateProfile(newUser.user, { displayName: nickname });
       navigate("/home");
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      if (error.code === "auth/email-already-in-use") {
+        addToast({
+          title: "Registration failed. Please verify your email address.",
+          color: "danger",
+        });
+      }
     }
   };
 

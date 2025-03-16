@@ -1,7 +1,7 @@
 import { FC } from "react";
 import type { SVGProps } from "react";
 
-const IcOutlineHome: FC<SVGProps<SVGSVGElement>> = (props) => {
+const HomeIconOutlined: FC<SVGProps<SVGSVGElement>> = (props) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -18,4 +18,4 @@ const IcOutlineHome: FC<SVGProps<SVGSVGElement>> = (props) => {
   );
 };
 
-export default IcOutlineHome;
+export default HomeIconOutlined;

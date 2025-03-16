@@ -1,5 +1,11 @@
+import HomeIconOutlined from "@/components/icons/HomeIconOutlined";
+import CalendarIcon from "@/components/icons/CalendarIcon";
 import { auth } from "@/firebase";
+import { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
+import DumbbellIcon from "@/components/icons/DumbbellIcon";
+import ChartIcon from "@/components/icons/ChartIcon";
+import SettingsIcon from "@/components/icons/SettingsIcon";
 
 type NavItem = {
   label: string;
@@ -11,7 +17,7 @@ type NavItem = {
     | "success"
     | "warning"
     | "danger";
-  icon?: string;
+  icon?: ReactNode;
 };
 
 export type SiteConfig = {
@@ -52,22 +58,22 @@ const useSiteConfig = () => {
           {
             label: "Home",
             action: () => navigate("/home"),
-            icon: "bx:bx-home",
+            icon: <HomeIconOutlined className="w-4 h-4" />,
           },
           {
             label: "Planner",
             action: () => navigate("/planner"),
-            icon: "bx:bx-calendar",
+            icon: <CalendarIcon className="w-4 h-4" />,
           },
           {
             label: "Analytics",
             action: () => navigate("/analytics"),
-            icon: "bx:bx-bar-chart-alt-2",
+            icon: <ChartIcon className="w-4 h-4" />,
           },
           {
             label: "My exercises",
             action: () => navigate("/exercises"),
-            icon: "bx:bx-dumbbell",
+            icon: <DumbbellIcon className="w-4 h-4" />,
           },
         ],
       },
@@ -77,7 +83,7 @@ const useSiteConfig = () => {
           {
             label: "Settings",
             action: () => navigate("/settings"),
-            icon: "bx:bx-cog",
+            icon: <SettingsIcon className="w-4 h-4" />,
           },
           {
             label: "Logout",

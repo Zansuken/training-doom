@@ -9,11 +9,11 @@ import {
   Button,
   Chip,
 } from "@heroui/react";
-import { Icon } from "@iconify/react";
 import { capitalize } from "@/helpers/strings";
 import ExerciseModal from "./exercise-modal";
 import FieldIntensity from "./fields/field-intensity";
 import { useGetTypeIcon } from "./hooks/useGetTypeIcon";
+import EyeOpenIconOutlined from "../icons/EyeOpenIconOutlined";
 interface ExerciseCardProps {
   exercise: ExerciseType;
   exercisesNames: string[];
@@ -25,6 +25,7 @@ const ExerciseCard: FC<ExerciseCardProps> = ({ exercise, exercisesNames }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getTypeIcon = useGetTypeIcon();
+  const Icon = getTypeIcon(type);
 
   return (
     <Card
@@ -32,7 +33,7 @@ const ExerciseCard: FC<ExerciseCardProps> = ({ exercise, exercisesNames }) => {
       title="View details"
     >
       <CardHeader className="flex gap-3">
-        <Icon icon={getTypeIcon(type)} className="text-4xl" />
+        <Icon className="w-10 h-10" />
         <div className="flex flex-col items-start">
           <p className="text-md">{capitalize(name)}</p>
           <p className="text-small text-default-500">{type}</p>
@@ -73,7 +74,7 @@ const ExerciseCard: FC<ExerciseCardProps> = ({ exercise, exercisesNames }) => {
       <CardFooter className="flex justify-end">
         <Button
           color="primary"
-          startContent={<Icon icon="bx:bx-show" width={24} />}
+          startContent={<EyeOpenIconOutlined className="w-5 h-5" />}
           onPress={() => setIsModalOpen(true)}
         >
           Details

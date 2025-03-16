@@ -1,10 +1,10 @@
 import DefaultLayout from "@/layouts/default";
 import { Card, CardBody, CardHeader, Divider, Link } from "@heroui/react";
 import { FC } from "react";
-import { Icon } from "@iconify/react";
 import ProfileForm from "@/components/profile-form";
 import { useAppContext } from "@/context";
 import Loading from "./loading";
+import UserIconOutlined from "@/components/icons/UserIconOutlined";
 
 const SettingsPage: FC = () => {
   document.title = "Settings";
@@ -27,7 +27,7 @@ const SettingsPage: FC = () => {
             <CardBody>
               <section className="flex flex-col gap-4">
                 <div className="flex items-center gap-4">
-                  <Icon icon="bx:bx-user" className="text-4xl" />
+                  <UserIconOutlined className="w-16 h-16" />
                   <div className="flex flex-col">
                     <Link href="#profile" color="foreground">
                       <h3 className="text-2xl">Profile</h3>

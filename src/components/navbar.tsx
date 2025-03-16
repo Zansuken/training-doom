@@ -141,6 +141,7 @@ export const Navbar = () => {
                         startContent={icon && icon}
                         endContent={align === "right" && label}
                         className={`text-${color}`}
+                        textValue={label?.toString()}
                       >
                         {align === "left" && label}
                       </DropdownItem>

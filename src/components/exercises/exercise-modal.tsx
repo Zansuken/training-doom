@@ -10,14 +10,12 @@ interface ExerciseModalProps {
   isOpen: boolean;
   onClose: () => void;
   exercise: ExerciseType;
-  exercisesNames: string[];
 }
 
 const ExerciseModal: FC<ExerciseModalProps> = ({
   isOpen,
   onClose,
   exercise,
-  exercisesNames,
 }) => {
   const [context, setContext] = useState<"SHOW" | "EDIT">("SHOW");
 
@@ -67,7 +65,6 @@ const ExerciseModal: FC<ExerciseModalProps> = ({
           <ExerciseForm
             editDefaultValues={formValues}
             onSubmit={onSubmit}
-            exercisesNames={exercisesNames}
             context={context}
             exercise={exercise}
             setContext={setContext}

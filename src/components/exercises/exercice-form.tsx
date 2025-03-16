@@ -21,15 +21,17 @@ import FieldMuscleGroups from "./fields/field-muscle-groups";
 import FieldEquipment from "./fields/field-equipment";
 import FieldDescription from "./fields/field-description";
 import FieldInstructions from "./fields/field-instructions";
-import useExercices from "@/requests/use-exercices";
+import useExercices, { getUserExercisesNames } from "@/requests/use-exercices";
 import TrashIconOutlined from "../icons/TrashIconOutlined";
 import EditIconOutlined from "../icons/EditIconOutlined";
 import RestoreIcon from "../icons/RestoreIcon";
+import { useQuery } from "@tanstack/react-query";
+import { useAppContext } from "@/context";
+import Loading from "@/pages/loading";
 
 interface ExerciseFormProps {
   editDefaultValues?: ExerciseFormData;
   onSubmit: SubmitHandler<ExerciseFormData>;
-  exercisesNames?: string[];
   context?: "SHOW" | "EDIT" | "CREATE";
   setContext?: Dispatch<SetStateAction<"SHOW" | "EDIT">>;
   setIsDeleteModalOpen?: (value: boolean) => void;
@@ -39,12 +41,20 @@ interface ExerciseFormProps {
 const ExerciseForm: FC<ExerciseFormProps> = ({
   editDefaultValues,
   onSubmit,
-  exercisesNames = [],
   context,
   exercise,
   setContext = () => {},
 }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const { user } = useAppContext();
+
+  const getExercisesNamesQuery = useQuery({
+    queryKey: ["exercisesNames"],
+    queryFn: () => getUserExercisesNames(user?.uid || ""),
+  });
+
+  const exercisesNames = getExercisesNamesQuery.data ?? [];
 
   const defaultValues: ExerciseFormData = editDefaultValues ?? {
     description: "",
@@ -98,6 +108,10 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
 
   const { deleteExerciseMutation } = useExercices(exercise?.userId ?? "");
 
+  if (getExercisesNamesQuery.isLoading) {
+    return <Loading withoutLayout />;
+  }
+
   return (
     <>
       <form
@@ -113,19 +127,21 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
             />
           </div>
           <div className="w-1/2 pr-2 flex items-baseline justify-end">
-            <Switch
-              isSelected={context !== "SHOW"}
-              onChange={() => {
-                if (context === "SHOW") {
-                  setContext("EDIT");
-                } else {
-                  setContext("SHOW");
-                  reset(defaultValues);
-                }
-              }}
-              startContent={<RestoreIcon />}
-              endContent={<EditIconOutlined />}
-            />
+            {context !== "CREATE" && (
+              <Switch
+                isSelected={context !== "SHOW"}
+                onChange={() => {
+                  if (context === "SHOW") {
+                    setContext("EDIT");
+                  } else {
+                    setContext("SHOW");
+                    reset(defaultValues);
+                  }
+                }}
+                startContent={<RestoreIcon />}
+                endContent={<EditIconOutlined />}
+              />
+            )}
           </div>
         </div>
         <div className="w-full flex gap-4">
@@ -141,6 +157,7 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
               context={context ?? "EDIT"}
               intensityValue={watch("intensity")}
               control={control}
+              isLoading={getExercisesNamesQuery.isLoading}
             />
           </div>
         </div>

@@ -12,7 +12,7 @@ import {
   where,
 } from "firebase/firestore/lite";
 
-const getUserExercises: (
+export const getUserExercises: (
   userId: string
 ) => Promise<ExerciseType[] | undefined> = async (userId: string) => {
   const q = query(collection(db, "exercises"), where("userId", "==", userId));
@@ -31,7 +31,23 @@ const getUserExercises: (
   }
 };
 
-const createExercise: (
+export const getUserExercisesNames: (
+  userId: string
+) => Promise<string[] | undefined> = async (userId: string) => {
+  const q = query(collection(db, "exercises"), where("userId", "==", userId));
+  try {
+    const exercisesSnapshot = await getDocs(q);
+    return exercisesSnapshot.docs.map((doc) => doc.data().name) as string[];
+  } catch (error) {
+    console.error("Error getting user exercises names", error);
+    addToast({
+      title: "Error getting user exercises names",
+      color: "danger",
+    });
+  }
+};
+
+export const createExercise: (
   userId: string,
   exercise: ExerciseFormData
 ) => Promise<void> = async (userId: string, exercise: ExerciseFormData) => {

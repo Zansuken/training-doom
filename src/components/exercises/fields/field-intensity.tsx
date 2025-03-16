@@ -1,6 +1,6 @@
 import { FC, SVGProps } from "react";
 import { ExerciseFormData, ExerciseIntensityType } from "@/types/exercise.type";
-import { Chip, Select, SelectItem } from "@heroui/react";
+import { Chip, Select, SelectItem, Skeleton } from "@heroui/react";
 import DevilIcon from "@/components/icons/DevilIcon";
 import { capitalize } from "@/helpers/strings";
 import { Control, Controller } from "react-hook-form";
@@ -45,17 +45,20 @@ const getIntensitySettings: (intensity: ExerciseIntensityType) => {
 
 interface ShowIntensityProps {
   intensity: ExerciseIntensityType;
+  isLoading: boolean;
 }
 
-const ShowIntensity: FC<ShowIntensityProps> = ({ intensity }) => {
+const ShowIntensity: FC<ShowIntensityProps> = ({ intensity, isLoading }) => {
   const { color, Icon } = getIntensitySettings(intensity);
 
   return (
     <div className="h-[56px] flex justify-between flex-col">
       <h3 className="text-md leading-[1]">Intensity</h3>
-      <Chip color={color} startContent={<Icon />}>
-        <span className="text-medium">{capitalize(intensity)}</span>
-      </Chip>
+      <Skeleton isLoaded={!isLoading} className="w-2/3 h-[28px] rounded-[14px]">
+        <Chip color={color} startContent={<Icon />}>
+          <span className="text-medium">{capitalize(intensity)}</span>
+        </Chip>
+      </Skeleton>
     </div>
   );
 };
@@ -107,17 +110,19 @@ interface FieldIntensityProps {
   context: "SHOW" | "EDIT" | "CREATE";
   intensityValue: ExerciseIntensityType;
   control?: Control<ExerciseFormData, any>;
+  isLoading: boolean;
 }
 
 const FieldIntensity: FC<FieldIntensityProps> = ({
   context,
   intensityValue,
   control,
+  isLoading,
 }) => {
   if (context === "EDIT" && control)
     return <EditIntensity intensityValue={intensityValue} control={control} />;
 
-  return <ShowIntensity intensity={intensityValue} />;
+  return <ShowIntensity intensity={intensityValue} isLoading={isLoading} />;
 };
 
 export default FieldIntensity;

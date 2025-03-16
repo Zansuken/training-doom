@@ -8,7 +8,7 @@ import { Key } from "@react-types/shared";
 import AddIconOutlined from "@/components/icons/AddIconOutlined";
 import DumbbellIcon from "@/components/icons/DumbbellIcon";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createExercise } from "@/requests/use-exercices";
+import { createExercise } from "@/functions/exercices";
 import { addToast } from "@heroui/react";
 import { ExerciseFormData } from "@/types/exercise.type";
 

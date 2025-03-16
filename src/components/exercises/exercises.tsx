@@ -1,7 +1,7 @@
 import { FC } from "react";
 import ExerciseCard from "./exercise-card";
 import { useAppContext } from "@/context";
-import { getUserExercises } from "@/requests/use-exercices";
+import { getUserExercises } from "@/functions/exercices";
 import Loading from "@/pages/loading";
 import { Alert, Button } from "@heroui/react";
 import AddIconOutlined from "../icons/AddIconOutlined";

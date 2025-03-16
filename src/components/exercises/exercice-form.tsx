@@ -5,6 +5,7 @@ import * as yup from "yup";
 import FieldName from "./fields/field-name";
 import FieldIntensity from "./fields/field-intensity";
 import {
+  addToast,
   Alert,
   Button,
   Modal,
@@ -20,11 +21,11 @@ import FieldMuscleGroups from "./fields/field-muscle-groups";
 import FieldEquipment from "./fields/field-equipment";
 import FieldDescription from "./fields/field-description";
 import FieldInstructions from "./fields/field-instructions";
-import useExercices, { getUserExercisesNames } from "@/requests/use-exercices";
+import { deleteExercise, getUserExercisesNames } from "@/functions/exercices";
 import TrashIconOutlined from "../icons/TrashIconOutlined";
 import EditIconOutlined from "../icons/EditIconOutlined";
 import RestoreIcon from "../icons/RestoreIcon";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAppContext } from "@/context";
 import Loading from "@/pages/loading";
 import FieldMetrics from "./fields/field-metrics";
@@ -101,7 +102,26 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
       resolver: yupResolver(validationSchema),
     });
 
-  const { deleteExerciseMutation } = useExercices(exercise?.userId ?? "");
+  const queryClient = useQueryClient();
+
+  const deleteExerciseMutation = useMutation({
+    mutationFn: (exerciseId: string) => deleteExercise(exerciseId),
+    onSuccess: async () => {
+      queryClient.invalidateQueries({ queryKey: ["exercises"] });
+      await queryClient.refetchQueries({ queryKey: ["exercises"] });
+      addToast({
+        title: "Exercise deleted",
+        color: "success",
+      });
+    },
+    onError: (error) => {
+      console.error("Error deleting exercise", error);
+      addToast({
+        title: "Error deleting exercise",
+        color: "danger",
+      });
+    },
+  });
 
   if (getExercisesNamesQuery.isLoading) {
     return <Loading withoutLayout />;

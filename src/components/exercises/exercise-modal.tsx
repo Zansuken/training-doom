@@ -1,9 +1,16 @@
 import { FC, useState } from "react";
 import { ExerciseFormData, ExerciseType } from "@/types/exercise.type";
-import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/react";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  addToast,
+} from "@heroui/react";
 import ExerciseForm from "./exercice-form";
 import { SubmitHandler } from "react-hook-form";
-import useExercices from "@/requests/use-exercices";
+import { updateExercise } from "@/functions/exercices";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface ExerciseModalProps {
   isOpen: boolean;
@@ -29,7 +36,33 @@ const ExerciseModal: FC<ExerciseModalProps> = ({
     type: exercise.type,
   };
 
-  const { updateExerciseMutation } = useExercices(exercise.userId);
+  const queryClient = useQueryClient();
+
+  const updateExerciseMutation = useMutation({
+    mutationFn: ({
+      userId,
+      id,
+      exercise,
+    }: {
+      userId: string;
+      id: string;
+      exercise: ExerciseFormData;
+    }) => updateExercise(userId, id, exercise),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["exercises"] });
+      addToast({
+        title: "Exercise updated",
+        color: "success",
+      });
+    },
+    onError: (error) => {
+      console.error("Error updating exercise", error);
+      addToast({
+        title: "Error updating exercise",
+        color: "danger",
+      });
+    },
+  });
 
   const onSubmit: SubmitHandler<ExerciseFormData> = (data) => {
     if (context === "SHOW") return;

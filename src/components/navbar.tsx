@@ -132,17 +132,20 @@ export const Navbar = () => {
             {user ? (
               Object.values(siteConfig.navItems).map((value, index) => (
                 <DropdownSection key={index} title={value.label}>
-                  {value.items.map(({ action, label, color, icon }, index) => (
-                    <DropdownItem
-                      key={index}
-                      onPress={action}
-                      color={color}
-                      startContent={icon && icon}
-                      className={`text-${color}`}
-                    >
-                      {label}
-                    </DropdownItem>
-                  ))}
+                  {value.items.map(
+                    ({ action, label, color, icon, align = "left" }, index) => (
+                      <DropdownItem
+                        key={index}
+                        onPress={action ?? undefined}
+                        color={color}
+                        startContent={icon && icon}
+                        endContent={align === "right" && label}
+                        className={`text-${color}`}
+                      >
+                        {align === "left" && label}
+                      </DropdownItem>
+                    )
+                  )}
                 </DropdownSection>
               ))
             ) : (

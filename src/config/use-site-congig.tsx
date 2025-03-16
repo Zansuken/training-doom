@@ -9,7 +9,7 @@ import SettingsIcon from "@/components/icons/SettingsIcon";
 import SignOutIcon from "@/components/icons/SignOutIcon";
 
 type NavItem = {
-  label: string;
+  label: string | ReactNode;
   action: () => void;
   color?:
     | "default"
@@ -19,6 +19,7 @@ type NavItem = {
     | "warning"
     | "danger";
   icon?: ReactNode;
+  align?: "left" | "right";
 };
 
 export type SiteConfig = {
@@ -35,6 +36,8 @@ export type SiteConfig = {
     };
   };
 };
+
+const currentVersion = import.meta.env.APP_VERSION;
 
 const useSiteConfig = () => {
   const navigate = useNavigate();
@@ -91,6 +94,12 @@ const useSiteConfig = () => {
             action: () => logout(),
             color: "danger",
             icon: <SignOutIcon className="w-4 h-4" />,
+          },
+          {
+            label: `v${currentVersion}`,
+            color: "default",
+            action: () => navigate("/changelog"),
+            align: "right",
           },
         ],
       },

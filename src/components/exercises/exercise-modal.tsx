@@ -47,7 +47,6 @@ const ExerciseModal: FC<ExerciseModalProps> = ({
       },
       {
         onSuccess: () => {
-          onClose();
           setContext("SHOW");
         },
       }

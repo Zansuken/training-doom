@@ -46,11 +46,11 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
 }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const defaultValues: ExerciseFormData = {
+  const defaultValues: ExerciseFormData = editDefaultValues ?? {
     description: "",
     duration: { time: 0, unit: "SECONDS" },
     equipment: [],
-    intensity: editDefaultValues?.intensity ?? "LOW",
+    intensity: "LOW",
     instructions: [],
     metrics: [],
     muscleGroups: [],
@@ -120,7 +120,7 @@ const ExerciseForm: FC<ExerciseFormProps> = ({
                   setContext("EDIT");
                 } else {
                   setContext("SHOW");
-                  reset();
+                  reset(defaultValues);
                 }
               }}
               startContent={<RestoreIcon />}

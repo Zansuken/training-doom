@@ -99,9 +99,18 @@ const FieldInstructions: FC<FieldInstructionsProps> = ({
       name="instructions"
       render={(field) => (
         <div className="flex flex-col gap-3">
-          {isActive && (
-            <div className="flex justify-between gap-2">
-              <div className="flex items-center gap-2">
+          <div className="flex justify-between gap-2">
+            <div className="flex items-center gap-6">
+              <Badge
+                color="primary"
+                variant="solid"
+                size="sm"
+                content={`${instructionsValue.length}/${MAX_INSTRUCTIONS}`}
+                isInvisible={!instructionsValue.length}
+              >
+                <NumberedListIcon width={32} height={32} />
+              </Badge>
+              {isActive && (
                 <Button
                   onPress={addInstruction}
                   color="primary"
@@ -111,34 +120,25 @@ const FieldInstructions: FC<FieldInstructionsProps> = ({
                 >
                   Add Step
                 </Button>
-                <Badge
-                  color="primary"
-                  variant="solid"
-                  size="sm"
-                  content={`${instructionsValue.length}/${MAX_INSTRUCTIONS}`}
-                  isInvisible={!instructionsValue.length}
-                >
-                  <NumberedListIcon width={32} height={32} />
-                </Badge>
-              </div>
-              {!(
-                field.field.value.toString() ===
-                instructionsRef.current.toString()
-              ) && (
-                <div className="flex items-center gap-2">
-                  <Button
-                    isIconOnly
-                    color="primary"
-                    size="sm"
-                    variant="bordered"
-                    onPress={resetInstructions}
-                  >
-                    <RestoreIcon className="w-4 h-4" />
-                  </Button>
-                </div>
               )}
             </div>
-          )}
+            {!(
+              field.field.value.toString() ===
+              instructionsRef.current.toString()
+            ) && (
+              <div className="flex items-center gap-2">
+                <Button
+                  isIconOnly
+                  color="primary"
+                  size="sm"
+                  variant="bordered"
+                  onPress={resetInstructions}
+                >
+                  <RestoreIcon className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
+          </div>
           <Accordion
             selectionMode="multiple"
             variant="bordered"
